@@ -1,6 +1,7 @@
 #include "usart.h"
 #include "stm32f10x.h"
 
+/** Configure and enable the device. */
 void serial_open(void)
 {
 	//Ensure the the Port A clock is enabled.
@@ -17,9 +18,27 @@ void serial_open(void)
 	GPIOA->CRL &= ~GPIO_CRL_MODE3_0;
 
   //Enable the USART Tx and Rx in the USART Control register.
+	USART1->CR1 |= USART_CR1_TE; //are these the right bits?
+	USART1->CR1 |= USART_CR1_RE;
 	
 	
   //Configure USART 2 for 115200 bps, 8-bits-no parity, 1 stop bit. (Peripheral clock is 36MHz).
-	RCC->CFGR = 0x001C0000;// 36 MHz	//is this the peripheral clock? it doesn't seem like it?
+	RCC->CFGR = 0x001C0000;// 36 MHz	//is this the peripheral clock? seems like it's based on the system clock
+	
 
+}
+
+void serial_close(void)
+{
+	//undo all that stuff above?
+}
+
+int sendbyte(uint8_t b)
+{
+	return 0;
+}	
+
+uint8_t getbyte(void)
+{
+	return 0;
 }
