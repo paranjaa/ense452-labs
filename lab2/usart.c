@@ -2,6 +2,7 @@
 #include "stm32f10x.h"
 
 
+//delay for about a second
 void delay()
 {
 	
@@ -25,7 +26,7 @@ void serial_open(void)
 	
 	
   //Configure PA2 for alternate function output Push-pull mode, max speed 50 MHz.
-	//MODE 11: Output 50 Mhz
+	//MODE 11: Output, 50 Mhz
 	//CNF 10: Alternate function push pull mode
 	GPIOA->CRL |=  GPIO_CRL_MODE2_0 |  GPIO_CRL_MODE2_1; //output 50Mhz
 	GPIOA->CRL |= GPIO_CRL_CNF2_1;
@@ -35,15 +36,18 @@ void serial_open(void)
 	//CRL 10: Input with pull-up / pull-down, so set bit 1, clear bit 0
 	GPIOA->CRL |=  GPIO_CRL_MODE3_1;
 	GPIOA->CRL &= ~GPIO_CRL_MODE3_0;
-
+	
+	//ne
+	
+	USART2->CR1 |= USART_CR1_UE;
   //Enable the USART Tx and Rx in the USART Control register.
 	USART2->CR1 |= USART_CR1_TE; //are these the right bits?
 	USART2->CR1 |= USART_CR1_RE;
-	
+	USART1->CR1 |= USART_CR1_UE;
 	//Actually supposed to be 115200
   //Configure USART 2 for 9600 bps, 8-bits-no parity, 1 stop bit. (Peripheral clock is 36MHz).
 	
-	RCC->CFGR = 0x001C0000;// 36 MHz	//is this the peripheral clock? seems like it's based on the system clock
+	//RCC->CFGR = 0x001C0000;// 36 MHz	//is this the peripheral clock? seems like it's based on the system clock
 	USART2 -> CR1 &= ~0x1000; //clear the 12th bit so it's set to Start bit, 8 Data bits, n Stop bit
 	//Write BRRR (for now it's 9600, but should be 115200)
 	//USARTDIV = 36 000 000 / 
@@ -64,7 +68,7 @@ void serial_close(void)
 int sendbyte(uint8_t b)
 {
 	//get the CR1 register, then mask it
-	volatile unsigned int USART_TXE_checker = USART1->SR;
+	volatile unsigned int USART_TXE_checker = USART2->SR;
 	USART_TXE_checker &= USART_SR_TXE;
 	//TXE is in bit 7, move it over to position 0 for easy checking
 	USART_TXE_checker = USART_TXE_checker >> 7;
@@ -72,13 +76,13 @@ int sendbyte(uint8_t b)
 	while(USART_TXE_checker != 1)
 	{
 		//continue checking the TXE
-		USART_TXE_checker = USART1->SR;
+		USART_TXE_checker = USART2->SR;
 		USART_TXE_checker &= USART_SR_TXE;
 		USART_TXE_checker = USART_TXE_checker >> 7;
 
 	}
 	
-	USART1->DR = b;
+	USART2->DR = b;
 	return 0;
 }	
 
@@ -111,11 +115,11 @@ void sendData()
 		char X = 0x21;
 		while(X != 0x7F)
 		{
-			//wait one second?
-			delay();
+			//wait ~1 second, so it doesn't spawm all a once
+			//delay();
 
 			//get the CR1 register, then mask it
-			volatile unsigned int USART_TXE_checker = USART1->SR;
+			volatile unsigned int USART_TXE_checker = USART2->SR;
 			USART_TXE_checker &= USART_SR_TXE;
 			//TXE is in bit 7, move it over to position 0 for easy checking
 			USART_TXE_checker = USART_TXE_checker >> 7;
@@ -126,14 +130,14 @@ void sendData()
 			while(USART_TXE_checker != 1)
 			{
 				//continue checking the TXE
-				USART_TXE_checker = USART1->SR;
+				USART_TXE_checker = USART2->SR;
 				USART_TXE_checker &= USART_SR_TXE;
 				USART_TXE_checker = USART_TXE_checker >> 7;
 
 			}
 		
 			//when it's ready, send it
-			USART1->DR = X;
+			USART2->DR = X;
 			//increment the value to send, hopefully it gets to ~ eventually
 			X++;
 

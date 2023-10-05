@@ -21,12 +21,12 @@
 
 int main() {
 	
-	//check if the program is running with the onboard LED
+	//show the program is running by toggling the onboard LED
 	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 	GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
 	GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
 	GPIOA->ODR |= GPIO_ODR_ODR5;
-	delay();
+	//delay();
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	
 	
