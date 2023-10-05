@@ -26,6 +26,10 @@ Gets an 8-bit character from the serial port, and returns it.
 */
 uint8_t getbyte(void);
 
+
+//phase 1 and testing
 void recieveData(void);
 
 void sendData(void);
+
+
