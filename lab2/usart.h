@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "stm32f10x.h"
 
+
+void delay(void);
 /** Configure and enable the device. */
 void serial_open(void);
 
@@ -23,3 +25,7 @@ Gets an 8-bit character from the serial port, and returns it.
 @pre must have already called serial_open()
 */
 uint8_t getbyte(void);
+
+void recieveData(void);
+
+void sendData(void);

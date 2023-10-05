@@ -18,22 +18,27 @@
 
 //Connected on COM 5
 
-void delay()
-{
-	
-	unsigned volatile int c, d;
-   
-   for (c = 1; c <= 3000; c++)
-       for (d = 1; d <= 3000; d++)
-       {}
-}
 
 int main() {
+	
+	//check if the program is running with the onboard LED
+	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+	GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
+	GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
+	GPIOA->ODR |= GPIO_ODR_ODR5;
+	delay();
+	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	
 	
 	serial_open();
 	
+	while(1)
+	{
+		sendData();
+		//recieveData();
+	}
 	
-	return 0;
+	//return 0;
 }
+
 
