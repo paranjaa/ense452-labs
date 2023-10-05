@@ -4,14 +4,19 @@
 /** Configure and enable the device. */
 void serial_open(void)
 {
+	
+	
 	//Ensure the the Port A clock is enabled.
 	RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN; 
-  //Ensure the USART 2 clock is enabled.
+  //Ensure the USART 2 clock is enabled. (It's in APB1)
 	RCC->APB1ENR |=  RCC_APB1ENR_USART2EN; 
+	
+	
   //Configure PA2 for alternate function output Push-pull mode, max speed 50 MHz.
 	GPIOA->CRL |=  GPIO_CRL_MODE2_0 |  GPIO_CRL_MODE2_1; //output 50Mhz
 	GPIOA->CRL |= GPIO_CRL_CNF2_1;
 	GPIOA->CRL &= ~GPIO_CRL_CNF2_0;
+	
   //Configure PA3 for Input with pull-up / pull-down.
 	//10: Input with pull-up / pull-down, so set bit 1, clear bit 0
 	GPIOA->CRL |=  GPIO_CRL_MODE3_1;
@@ -30,6 +35,7 @@ void serial_open(void)
 	
 	//Write BRRR (it's a specific value, 9600)
 	//USARTDIV = 36 000 000 / 
+	//It's 9600 right now
 	USART2->BRR = 0x9C4;
 	
 	
@@ -78,3 +84,85 @@ uint8_t getbyte(void)
 	}
 	return value;
 }
+
+
+
+
+/*
+void sendData()
+{
+	
+		//supposed to be ASCII characters beginning with !
+		//	and ending with ~(Hex values $21 through $7E)
+		char X = 0x21;
+		while(X != 0x7F)
+		{
+			//wait one second?
+			delay(10000);
+
+			//get the CR1 register, then mask it
+			volatile unsigned int USART_TXE_checker = USART1->SR;
+			USART_TXE_checker &= USART_SR_TXE;
+			//TXE is in bit 7, move it over to position 0 for easy checking
+			USART_TXE_checker = USART_TXE_checker >> 7;
+	
+			// !!!
+			//might want incorporate recieveData in here so that it doesn't
+			//do all the characters before checking for a button press
+			while(USART_TXE_checker != 1)
+			{
+				//continue checking the TXE
+				USART_TXE_checker = USART1->SR;
+				USART_TXE_checker &= USART_SR_TXE;
+				USART_TXE_checker = USART_TXE_checker >> 7;
+
+			}
+		
+			//when it's ready, send it
+			USART1->DR = X;
+			//increment the value to send, hopefully it gets to ~ eventually
+			X++;
+
+
+	}
+}
+*/
+
+
+void recieveData()
+{
+		//get the SR register, mask it
+		volatile unsigned int USART_RXNE_checker = USART1->SR;
+		USART_RXNE_checker &= USART_SR_RXNE;
+		//RXNE is in position 5, move it so it's easy to check
+		char Y;
+		USART_RXNE_checker = USART_RXNE_checker >> 5;
+		if(USART_RXNE_checker == 1)
+		{
+			//if it is ready, then copy the value to Y
+			Y = USART1 ->DR;
+			//picked y and n as the values for turning the LED on and off
+			if(Y == 'y')
+			{
+				GPIOA->ODR |= GPIO_ODR_ODR5;
+			}
+			if(Y == 'n')
+			{
+				GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+			}
+			//if it's neither of those, exit the function
+			else
+			{
+			
+			}
+		
+		}
+		//if it isn't ready, exit the function
+		else
+		{
+			return;
+		}
+	
+
+}
+
