@@ -84,6 +84,8 @@ int sendbyte(uint8_t b)
 	
 	USART2->DR = b;
 	return 0;
+	
+	//maybe add a failure case here? Like, a return 1?
 }	
 
 uint8_t getbyte(void)
@@ -148,7 +150,7 @@ void sendData()
 
 
 void recieveData(void)
-{
+    {
 		//get the SR register, mask it
 		volatile unsigned int USART_RXNE_checker = USART2->SR;
 		USART_RXNE_checker &= USART_SR_RXNE;
