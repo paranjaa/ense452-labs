@@ -18,12 +18,20 @@ void serial_open(void)
 	GPIOA->CRL &= ~GPIO_CRL_MODE3_0;
 
   //Enable the USART Tx and Rx in the USART Control register.
-	USART1->CR1 |= USART_CR1_TE; //are these the right bits?
-	USART1->CR1 |= USART_CR1_RE;
+	USART2->CR1 |= USART_CR1_TE; //are these the right bits?
+	USART2->CR1 |= USART_CR1_RE;
 	
 	
   //Configure USART 2 for 115200 bps, 8-bits-no parity, 1 stop bit. (Peripheral clock is 36MHz).
 	RCC->CFGR = 0x001C0000;// 36 MHz	//is this the peripheral clock? seems like it's based on the system clock
+	
+	USART2 -> CR1 &= ~0x1000; //clear the 12th bit so it's set to Start bit, 8 Data bits, n Stop bit
+	
+	
+	//Write BRRR (it's a specific value, 9600)
+	//USARTDIV = 36 000 000 / 
+	USART2->BRR = 0x9C4;
+	
 	
 
 }
@@ -35,10 +43,38 @@ void serial_close(void)
 
 int sendbyte(uint8_t b)
 {
+	//get the CR1 register, then mask it
+	volatile unsigned int USART_TXE_checker = USART1->SR;
+	USART_TXE_checker &= USART_SR_TXE;
+	//TXE is in bit 7, move it over to position 0 for easy checking
+	USART_TXE_checker = USART_TXE_checker >> 7;
+	
+	while(USART_TXE_checker != 1)
+	{
+		//continue checking the TXE
+		USART_TXE_checker = USART1->SR;
+		USART_TXE_checker &= USART_SR_TXE;
+		USART_TXE_checker = USART_TXE_checker >> 7;
+
+	}
+	
+	USART1->DR = b;
 	return 0;
 }	
 
 uint8_t getbyte(void)
 {
-	return 0;
+	//get the SR register, mask it
+	//RXNE is in position 5, move it so it's easy to check
+	uint8_t value;
+	volatile unsigned int USART_RXNE_checker = USART1->SR;
+	USART_RXNE_checker &= USART_SR_RXNE;
+	USART_RXNE_checker = USART_RXNE_checker >> 5;
+	
+	//if it's ready, then copy the value from the register
+	if(USART_RXNE_checker == 1)
+	{
+		value = USART1 ->DR;
+	}
+	return value;
 }
