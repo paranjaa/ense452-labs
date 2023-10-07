@@ -41,17 +41,18 @@ int main() {
 		//sendbyte(testChar);
 		//recieveData();
 		
-		testChar = getbyte();
+		//testChar = getbyte();
 		
-		if(testChar == 'y')
-		{
-			GPIOA->ODR |= GPIO_ODR_ODR5;
-		}
+		//if(testChar == 'y')
+		//{
+		//	GPIOA->ODR |= GPIO_ODR_ODR5;
+		//}
 		
-		if(testChar == 'n')
-		{
-				GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-		}
+		//if(testChar == 'n')
+		//{
+		//		GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+		//}
+		echoCharacter();
 		
 	}
 	

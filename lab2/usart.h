@@ -32,4 +32,6 @@ void recieveData(void);
 
 void sendData(void);
 
+void echoCharacter(void);
+
 

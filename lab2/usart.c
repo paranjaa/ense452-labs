@@ -105,9 +105,24 @@ uint8_t getbyte(void)
 	return value;
 }
 
+//
+void echoCharacter(void)
+{
+	uint8_t char1 = getbyte();
+	if(char1 == '\r')
+	{
+		sendbyte('\r');
+		sendbyte('\n');
+	}
+	else{
+		sendbyte(char1);
+	}
+	
+}
 
 
 
+//adapted from ENSE 352 lab, mostly used as a reference
 
 void sendData()
 {
