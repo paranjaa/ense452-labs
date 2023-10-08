@@ -49,7 +49,7 @@ int main() {
 	{
 		
 		//CLI_Receive(testCharArray, testSize);
-		CLI_Prompt();
+		CLI_Help();
 		delay();
 		
 		
