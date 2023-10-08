@@ -7,6 +7,7 @@
 
 #include "stm32f10x.h"
 #include "usart.h"
+#include "CLI.h"
 
 //Connected on COM 5
 
@@ -34,7 +35,16 @@ int main() {
 	//phase 1
 	//uint8_t testChar = 'a';
 	
-	uint8_t testChar = 'n';
+	uint16_t testSize = 4;
+	uint8_t testCharArray[testSize];
+	
+	
+	testCharArray[0] = 't';
+	testCharArray[1] = 'e';
+	testCharArray[2] = 's';
+	testCharArray[3] = 't';
+	
+	uint8_t* testPointer = &testCharArray[0];
 	while(1)
 	{
 		//sendData();
@@ -52,7 +62,12 @@ int main() {
 		//{
 		//		GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 		//}
-		echoCharacter();
+		//echoCharacter();
+		CLI_Transmit(testPointer, testSize);
+		delay();
+
+		
+		
 		
 	}
 	

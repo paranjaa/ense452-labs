@@ -4,6 +4,38 @@
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
+	delay();
+	for(uint16_t i = 0; i < Size; i++)
+	{
+		sendbyte( *(pData + i) );
+	}
+	sendbyte('\r');
+	sendbyte('\n');
+	
+	
+	
+	
+	/*
+	sendbyte(*pData);
+	delay();
+	
+	sendbyte(*(pData+1));
+	delay();
+	
+	sendbyte(*(pData+2));
+	delay();
+
+	sendbyte(*(pData+3));
+	delay();
+
+
+
+	sendbyte('\n');
+	delay();
+	
+	sendbyte('\r');
+	delay();
+	*/
 
 }
 
