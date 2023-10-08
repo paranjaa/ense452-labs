@@ -47,6 +47,24 @@ int main() {
 	uint8_t* testPointer = &testCharArray[0];
 	while(1)
 	{
+		
+		//CLI_Receive(testCharArray, testSize);
+		CLI_Prompt();
+		delay();
+		
+		
+	}
+	
+	//return 0;
+}
+
+		
+		//sendbyte(*testPointer);
+		//sendbyte(*(testPointer+1));
+		//sendbyte(*(testPointer+2));
+		//sendbyte(*(testPointer+3));
+		
+
 		//sendData();
 		//sendbyte(testChar);
 		//recieveData();
@@ -64,21 +82,3 @@ int main() {
 		//}
 		//echoCharacter();
 		//CLI_Transmit(testPointer, testSize);
-		CLI_Receive(testPointer, testSize);
-		
-		sendbyte(*testPointer);
-		sendbyte(*(testPointer+1));
-		sendbyte(*(testPointer+2));
-		sendbyte(*(testPointer+3));
-		
-		delay();
-
-		
-		
-		
-	}
-	
-	//return 0;
-}
-
-

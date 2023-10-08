@@ -11,44 +11,20 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 	}
 	sendbyte('\r');
 	sendbyte('\n');
-	
-	
-	
-	
-	/*
-	sendbyte(*pData);
-	delay();
-	
-	sendbyte(*(pData+1));
-	delay();
-	
-	sendbyte(*(pData+2));
-	delay();
-
-	sendbyte(*(pData+3));
-	delay();
-
-
-
-	sendbyte('\n');
-	delay();
-	
-	sendbyte('\r');
-	delay();
-	*/
 
 }
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
-	uint8_t testCharArray[Size];
-	uint8_t testChar;
-	pData = &testCharArray[0];
-	
-	for(int i; i < Size; i++)
+	while(getbyte() != '\r')
 	{
-		testChar = getbyte();
-		testCharArray[i] = testChar;
+			echoCharacter();
 	}
+}
+
+void CLI_Prompt()
+{
+	uint8_t command_prompt[] = "Enter Command:";
+	CLI_Transmit(command_prompt, (sizeof(command_prompt) / sizeof(uint8_t)));
 
 }
