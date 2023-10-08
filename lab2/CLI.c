@@ -41,5 +41,14 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
+	uint8_t testCharArray[Size];
+	uint8_t testChar;
+	pData = &testCharArray[0];
+	
+	for(int i; i < Size; i++)
+	{
+		testChar = getbyte();
+		testCharArray[i] = testChar;
+	}
 
 }
