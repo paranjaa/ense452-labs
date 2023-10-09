@@ -42,11 +42,24 @@ int main() {
 	//uint8_t* testPointer = &testCharArray[0];
 	//while(1)
 	//{
-	CLI_LEDON();
-	CLI_Prompt();
-	CLI_Receive(testCharArray,testSize);
-	CLI_Transmit(testCharArray, testSize);
-	CLI_Input(testCharArray, testSize);
+	//CLI_LEDON();
+	uint8_t quit1 = 1;
+	while(1)
+	{
+		CLI_Prompt();
+		CLI_Receive(testCharArray,testSize);
+		CLI_Transmit(testCharArray, testSize);
+		quit1 = CLI_Quit(testCharArray, testSize);
+		if(quit1 == 0)
+		{
+			uint8_t quit_msg[] = "Ending the program";
+			CLI_Transmit(quit_msg, (sizeof(quit_msg) / sizeof(uint8_t)));
+			break;
+		}	
+		CLI_Input(testCharArray, testSize);
+	
+	}
+	
 	//}
 	
 	return 0;

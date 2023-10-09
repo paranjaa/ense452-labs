@@ -44,8 +44,8 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 		}
 	
 	}
-	uint8_t result1[] = "\n \rYou Typed: ";
-	CLI_Transmit(result1, (sizeof(result1) / sizeof(uint8_t)));
+	//uint8_t result1[] = "\n \rYou Typed: ";
+	//CLI_Transmit(result1, (sizeof(result1) / sizeof(uint8_t)));
 	
 	//CLI_Transmit(pData, Size);
 	
@@ -66,7 +66,7 @@ void CLI_Help(void)
 	CLI_Transmit(help1, (sizeof(help1) / sizeof(uint8_t)));
 	uint8_t help2[] = "	ledon - turns LED on";
 	CLI_Transmit(help2, (sizeof(help2) / sizeof(uint8_t)));
-	uint8_t help3[] = "	ledof - turns LED off";
+	uint8_t help3[] = "	ledoff - turns LED off";
 	CLI_Transmit(help3, (sizeof(help3) / sizeof(uint8_t)));
 	uint8_t help4[] = "	ledquery - prints LED state";
 	CLI_Transmit(help4, (sizeof(help4) / sizeof(uint8_t)));
@@ -135,6 +135,20 @@ void CLI_Input(uint8_t *pData, uint16_t Size)
 		CLI_LEDOFF();
 		return;
 	}
+	
+	if(*(pData) == 'l' 
+		&& *(pData+1) == 'e'
+		&& *(pData+2) == 'd'
+		&& *(pData+3) == 'q'
+		&& *(pData+4) == 'u'
+		&& *(pData+5) == 'e'
+		&& *(pData+6) == 'r'
+		&& *(pData+7) == 'y'
+	)
+	{
+		CLI_Query();
+		return;
+	}
 	else
 	{
 		uint8_t error_msg[] = "Error - Not a registered command";
@@ -142,4 +156,18 @@ void CLI_Input(uint8_t *pData, uint16_t Size)
 	}
 	
 	
+}
+
+uint8_t CLI_Quit(uint8_t *pData, uint16_t Size)
+{
+	if(*(pData) == 'q' && *(pData+1) == 'u' && *(pData+2) == 'i' && *(pData+3) == 't' )
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+
 }
