@@ -27,7 +27,12 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 				*(pData+currentSize) = currentChar;
 				currentSize++;
 		}
-		
+		if(currentChar == 127)
+		{
+			sendbyte(currentChar);
+			*(pData+currentSize) = ' ';
+			currentSize--;
+		}
 		
 	}
 	
@@ -65,7 +70,14 @@ void CLI_Help(void)
 	CLI_Transmit(help3, (sizeof(help3) / sizeof(uint8_t)));
 	uint8_t help4[] = "	ledquery - prints LED state";
 	CLI_Transmit(help4, (sizeof(help4) / sizeof(uint8_t)));
+	uint8_t help5[] = "	help - prints list of commands (as you can see)";
+	CLI_Transmit(help5, (sizeof(help5) / sizeof(uint8_t)));
+	uint8_t help6[] = "	quit - ends program";
+	CLI_Transmit(help6, (sizeof(help6) / sizeof(uint8_t)));
 }
+
+
+
 
 void CLI_Query(void)
 {
@@ -87,4 +99,26 @@ void CLI_Query(void)
 	}
 	
 
+}
+
+
+void CLI_Input(uint8_t *pData, uint16_t Size)
+{
+	if(*(pData) == 'h' && *(pData+1) == 'e' && *(pData+2) == 'l' && *(pData+3) == 'p' )
+	{
+		CLI_Help();
+		return;
+	}
+	
+	//if(*(pData) == 'l' && *(pData+1) == 'e' && *(pData+2) == 'd' && *(pData+3) == 'o' && *(pData+3) == 'n' )
+	//{
+		
+	//}
+	else
+	{
+		uint8_t error_msg[] = "Error - Not a registered command";
+		CLI_Transmit(error_msg, (sizeof(error_msg) / sizeof(uint8_t)));
+	}
+	
+	
 }

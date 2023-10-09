@@ -7,4 +7,5 @@ void CLI_Receive(uint8_t *pData, uint16_t Size);
 void CLI_Prompt(void);
 void CLI_Help(void);
 void CLI_Query(void);
+void CLI_Input(uint8_t *pData, uint16_t Size);
 

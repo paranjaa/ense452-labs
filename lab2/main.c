@@ -51,6 +51,7 @@ int main() {
 	CLI_Prompt();
 	CLI_Receive(testCharArray,testSize);
 	CLI_Transmit(testCharArray, testSize);
+	CLI_Input(testCharArray, testSize);
 	//}
 	
 	return 0;
