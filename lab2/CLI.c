@@ -31,6 +31,8 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 	//which they shouldn't, the commands are real short)
 	while(currentChar != '\r' && currentSize < Size)
 	{
+		//maybe should add a specific response for typing too much
+		//figured it would still be an error regardless 
 		
 		//read a character again
 		currentChar = getbyte();
@@ -230,12 +232,15 @@ uint8_t CLI_Quit(uint8_t *pData, uint16_t Size)
 	&& *(pData+2) == 'i'
 	&& *(pData+3) == 't' )
 	{
-		//if it does match, return 0 so it leaves the loop
+		//if it does match, print a message to show it
+		//and return 0 so the loop gets exited
+		uint8_t quit_msg[] = "> Ending the program";
+		CLI_Transmit(quit_msg, (sizeof(quit_msg) / sizeof(uint8_t)));
 		return 0;
 	}
 	else
 	{
-		//or return 1 if it isn't a match, so it can keep going
+		//or return 1 if it isn't a match, so it can go and look for commands
 		return 1;
 	}
 
