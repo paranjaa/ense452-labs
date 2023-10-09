@@ -1,3 +1,13 @@
+/*
+ENSE 452
+Alok Paranjape
+200246370
+October 8th
+usart.h has the function signatures and comments for phase 1
+just the basic sending and getting bytes, plus the startup functions 
+and the others for testing
+*/
+
 #include <stdint.h>
 #include "stm32f10x.h"
 
@@ -15,7 +25,6 @@ void delay(void);
 void serial_open(void);
 
 /**
-(NOT IMPLEMENTED YET)
 Undo whatever serial_open() did, setting the peripheral back to
 its reset configuration. */
 void serial_close(void);

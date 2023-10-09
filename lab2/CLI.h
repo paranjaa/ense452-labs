@@ -1,3 +1,12 @@
+/*
+ENSE 452
+Alok Paranjape
+200246370
+October 8th
+CLI.h has the function header comments for phase 2 and 3
+Tried to keep it similar the the ones in the assignment
+*/
+
 #include "stm32f10x.h"
 #include "usart.h"
 
