@@ -1,6 +1,27 @@
+/*
+ENSE 452
+Alok Paranjape
+200246370
+October 8th
+usart.c has the function definitions for phase 1
+the basic sending and getting byte functions
+plus a startup and delay function I used for debugging
+*/
+
+
 #include "usart.h"
 #include "stm32f10x.h"
 
+
+void startupCheck(void)
+{	
+	//show the program is running by toggling the onboard LED
+	GPIOA->ODR |= GPIO_ODR_ODR5;
+	//wait a second, then turn it off
+	delay();
+	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+
+}
 
 //delay for about a second, holdover from ENEL 351 code
 void delay(void)

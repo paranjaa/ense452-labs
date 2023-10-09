@@ -16,17 +16,6 @@ code was actually running
 
 
 
-void startupCheck(void)
-{	
-	//show the program is running by toggling the onboard LED
-	GPIOA->ODR |= GPIO_ODR_ODR5;
-	//wait a second, then turn it off
-	delay();
-	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-
-}
-
-
 int main() {
 	
 	//calling the setup function
