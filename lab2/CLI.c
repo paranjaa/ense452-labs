@@ -109,18 +109,30 @@ void CLI_LEDON(void)
 	GPIOA->ODR |= GPIO_ODR_ODR5;
 }
 
+void CLI_LEDOFF(void)
+{
+	uint8_t off_msg[] = "Turning LED OFF";
+	CLI_Transmit(off_msg, (sizeof(off_msg) / sizeof(uint8_t)));
+	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+}
+
 void CLI_Input(uint8_t *pData, uint16_t Size)
 {
 	if(*(pData) == 'h' && *(pData+1) == 'e' && *(pData+2) == 'l' && *(pData+3) == 'p' )
 	{
 		CLI_Help();
-		//CLI_LEDON();
 		return;
 	}
 	
 	if(*(pData) == 'l' && *(pData+1) == 'e' && *(pData+2) == 'd' && *(pData+3) == 'o' && *(pData+4) == 'n' )
 	{
 		CLI_LEDON();
+		return;
+	}
+	
+	if(*(pData) == 'l' && *(pData+1) == 'e' && *(pData+2) == 'd' && *(pData+3) == 'o' && *(pData+4) == 'f' && *(pData+5) == 'f')
+	{
+		CLI_LEDOFF();
 		return;
 	}
 	else

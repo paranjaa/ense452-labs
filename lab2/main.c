@@ -23,10 +23,8 @@ void startupCheck(void)
 
 int main() {
 	
-	//startupCheck();
-
-	
 	serial_open();
+	startupCheck();
 	
 	//phase 1
 	//uint8_t testChar = 'a';
@@ -44,6 +42,7 @@ int main() {
 	//uint8_t* testPointer = &testCharArray[0];
 	//while(1)
 	//{
+	CLI_LEDON();
 	CLI_Prompt();
 	CLI_Receive(testCharArray,testSize);
 	CLI_Transmit(testCharArray, testSize);
