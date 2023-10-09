@@ -35,24 +35,28 @@ int main() {
 	//phase 1
 	//uint8_t testChar = 'a';
 	
-	uint16_t testSize = 4;
-	uint8_t testCharArray[testSize];
+	//uint16_t testSize = 4;
+	//uint8_t testCharArray[testSize];
 	
 	
 	//testCharArray[0] = 't';
 	//testCharArray[1] = 'e';
 	//testCharArray[2] = 's';
 	//testCharArray[3] = 't';
+
 	
-	uint8_t* testPointer = &testCharArray[0];
+	//uint8_t* testPointer = &testCharArray[0];
 	while(1)
 	{
 		
 		//CLI_Receive(testCharArray, testSize);
-		CLI_Help();
+		//CLI_Help();
+		GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+		CLI_Query();
 		delay();
-		
-		
+		GPIOA->ODR |= GPIO_ODR_ODR5;
+		CLI_Query();
+		delay();
 	}
 	
 	//return 0;

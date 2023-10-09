@@ -38,5 +38,26 @@ void CLI_Help(void)
 	CLI_Transmit(help3, (sizeof(help3) / sizeof(uint8_t)));
 	uint8_t help4[] = "	ledquery - prints LED state";
 	CLI_Transmit(help4, (sizeof(help4) / sizeof(uint8_t)));
+}
+
+void CLI_Query(void)
+{
+	//get the GPIO ODR Line, which should have if the LED is on
+	volatile unsigned int GPIO_ODR_checker = (GPIOA->ODR);
+	GPIO_ODR_checker &= GPIO_ODR_ODR5;
+	GPIO_ODR_checker = GPIO_ODR_checker >> 5;
+
+	if(GPIO_ODR_checker == 1)
+	{
+		uint8_t query_on[] = "Onboard LED is currently ON";
+		CLI_Transmit(query_on, (sizeof(query_on) / sizeof(uint8_t)));
+	}
+	else
+	{
+		uint8_t query_off[] = "Onboard LED is currently OFF";
+		CLI_Transmit(query_off, (sizeof(query_off) / sizeof(uint8_t)));
+	
+	}
+	
 
 }
