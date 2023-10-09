@@ -27,7 +27,7 @@ void startupCheck(void)
 
 int main() {
 	
-	startupCheck();
+	//startupCheck();
 
 	
 	serial_open();
@@ -35,8 +35,8 @@ int main() {
 	//phase 1
 	//uint8_t testChar = 'a';
 	
-	//uint16_t testSize = 4;
-	//uint8_t testCharArray[testSize];
+	uint16_t testSize = 4;
+	uint8_t testCharArray[testSize];
 	
 	
 	//testCharArray[0] = 't';
@@ -46,20 +46,13 @@ int main() {
 
 	
 	//uint8_t* testPointer = &testCharArray[0];
-	while(1)
-	{
-		
-		//CLI_Receive(testCharArray, testSize);
-		//CLI_Help();
-		GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-		CLI_Query();
-		delay();
-		GPIOA->ODR |= GPIO_ODR_ODR5;
-		CLI_Query();
-		delay();
-	}
+	//while(1)
+	//{
+	CLI_Receive(testCharArray,testSize);
+
+	//}
 	
-	//return 0;
+	return 0;
 }
 
 		
@@ -86,3 +79,12 @@ int main() {
 		//}
 		//echoCharacter();
 		//CLI_Transmit(testPointer, testSize);
+		
+		//CLI_Receive(testCharArray, testSize);
+		//CLI_Help();
+		//GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+		//CLI_Query();
+		//delay();
+		//GPIOA->ODR |= GPIO_ODR_ODR5;
+		//CLI_Query();
+		//delay();

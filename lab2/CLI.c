@@ -15,10 +15,19 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
-	while(getbyte() != '\r')
+	uint8_t currentChar = getbyte();
+	while(currentChar != '\r')
 	{
-			echoCharacter();
+		
+		currentChar = getbyte();
+		if(currentChar > 32 && currentChar < 127)
+		{
+				sendbyte(currentChar);
+		}
+		
+		
 	}
+
 }
 
 void CLI_Prompt(void)
