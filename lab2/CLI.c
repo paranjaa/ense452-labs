@@ -102,18 +102,27 @@ void CLI_Query(void)
 }
 
 
+void CLI_LEDON(void)
+{
+	uint8_t on_msg[] = "Turning LED ON";
+	CLI_Transmit(on_msg, (sizeof(on_msg) / sizeof(uint8_t)));
+	GPIOA->ODR |= GPIO_ODR_ODR5;
+}
+
 void CLI_Input(uint8_t *pData, uint16_t Size)
 {
 	if(*(pData) == 'h' && *(pData+1) == 'e' && *(pData+2) == 'l' && *(pData+3) == 'p' )
 	{
 		CLI_Help();
+		//CLI_LEDON();
 		return;
 	}
 	
-	//if(*(pData) == 'l' && *(pData+1) == 'e' && *(pData+2) == 'd' && *(pData+3) == 'o' && *(pData+3) == 'n' )
-	//{
-		
-	//}
+	if(*(pData) == 'l' && *(pData+1) == 'e' && *(pData+2) == 'd' && *(pData+3) == 'o' && *(pData+4) == 'n' )
+	{
+		CLI_LEDON();
+		return;
+	}
 	else
 	{
 		uint8_t error_msg[] = "Error - Not a registered command";

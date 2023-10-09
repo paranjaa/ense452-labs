@@ -37,7 +37,9 @@ void serial_open(void)
 	GPIOA->CRL |=  GPIO_CRL_MODE3_1;
 	GPIOA->CRL &= ~GPIO_CRL_MODE3_0;
 	
-	//ne
+	//get the output ready for turning on the LED
+	GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
+	GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
 	
 	USART2->CR1 |= USART_CR1_UE;
   //Enable the USART Tx and Rx in the USART Control register.
