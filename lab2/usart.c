@@ -82,9 +82,43 @@ void serial_open(void)
 
 }
 
-//still unimplemented
+//just reverses every bit that was set, flipped all the 1 sets (with |) to 0s (with &)
+//not sure if this actually puts everything back to how it was on startup, probably need to check defaults
 void serial_close(void)
 {
+
+	//turn off the port A clock and the usart2 clock
+	RCC->APB2ENR &=  ~RCC_APB2ENR_IOPAEN; 
+	RCC->APB1ENR &=  ~RCC_APB1ENR_USART2EN; 
+	
+	
+	//stop using PA for alternate function push pull, and set the speed off of 50
+	GPIOA->CRL &=  ~GPIO_CRL_MODE2_0;
+	GPIOA->CRL &= ~GPIO_CRL_MODE2_1; 
+	GPIOA->CRL &= ~GPIO_CRL_CNF2_1;
+	GPIOA->CRL |= GPIO_CRL_CNF2_0;
+	
+	//stop PA3 from being used for input
+	GPIOA->CRL &=  ~GPIO_CRL_MODE3_1;
+	GPIOA->CRL |= GPIO_CRL_MODE3_0;
+	
+	//stop PA5 from being ready for an LED
+	GPIOA->CRL &=  ~GPIO_CRL_MODE5_0;
+	GPIOA->CRL &=  ~GPIO_CRL_MODE5_1;
+	GPIOA->CRL |= GPIO_CRL_CNF5_0 | GPIO_CRL_CNF5_1;
+	
+	//set the USARTEnable/TransmitEnable/RecieveEnable bits to 0
+	USART2->CR1 &= ~USART_CR1_UE;
+	USART2->CR1 &= ~USART_CR1_TE;
+	USART2->CR1 &= ~USART_CR1_RE;
+	
+
+	//clear out the stop bit, which should put it back to default n bits
+	USART2 -> CR1 |= ~0x1000; 
+	
+	//get rid of the baud rate
+	USART2 -> BRR = 0x0;
+	
 
 }
 
