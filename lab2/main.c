@@ -48,7 +48,6 @@ int main() {
 	{
 		CLI_Prompt();
 		CLI_Receive(testCharArray,testSize);
-		CLI_Transmit(testCharArray, testSize);
 		quit1 = CLI_Quit(testCharArray, testSize);
 		if(quit1 == 0)
 		{
@@ -57,6 +56,7 @@ int main() {
 			break;
 		}	
 		CLI_Input(testCharArray, testSize);
+		CLI_Clean(testCharArray, testSize);
 	
 	}
 	

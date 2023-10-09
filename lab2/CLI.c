@@ -4,6 +4,8 @@
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
+	sendbyte('\r');
+	sendbyte('\n');
 	for(uint16_t i = 0; i < Size; i++)
 	{
 		sendbyte( *(pData + i) );
@@ -169,5 +171,13 @@ uint8_t CLI_Quit(uint8_t *pData, uint16_t Size)
 		return 1;
 	}
 
+}
+
+void CLI_Clean(uint8_t *pData, uint16_t Size)
+{
+	for(int i = 0; i < Size; i++)
+	{
+		*(pData + i) = ' ';
+	}
 
 }
