@@ -35,7 +35,7 @@ int main() {
 	//phase 1
 	//uint8_t testChar = 'a';
 	
-	uint16_t testSize = 4;
+	uint16_t testSize = 32;
 	uint8_t testCharArray[testSize];
 	
 	
@@ -48,8 +48,9 @@ int main() {
 	//uint8_t* testPointer = &testCharArray[0];
 	//while(1)
 	//{
+	CLI_Prompt();
 	CLI_Receive(testCharArray,testSize);
-
+	CLI_Transmit(testCharArray, testSize);
 	//}
 	
 	return 0;

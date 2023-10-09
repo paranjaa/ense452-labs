@@ -16,17 +16,35 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
 	uint8_t currentChar = getbyte();
-	while(currentChar != '\r')
+	uint16_t currentSize = 0;
+	while(currentChar != '\r' && currentSize < Size)
 	{
 		
 		currentChar = getbyte();
 		if(currentChar > 32 && currentChar < 127)
 		{
 				sendbyte(currentChar);
+				*(pData+currentSize) = currentChar;
+				currentSize++;
 		}
 		
 		
 	}
+	
+	if(currentSize < Size)
+	{
+		for(int i = currentSize; i < Size; i++)
+		{
+			*(pData+i) = ' ';
+		}
+	
+	}
+	uint8_t result1[] = "\n \rYou Typed: ";
+	CLI_Transmit(result1, (sizeof(result1) / sizeof(uint8_t)));
+	
+	//CLI_Transmit(pData, Size);
+	
+
 
 }
 
