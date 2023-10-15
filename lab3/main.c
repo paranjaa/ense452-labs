@@ -103,6 +103,11 @@ int main() {
 	}	
 	//also just going to turn off the LED so it doesn't stay on while nothing's happening
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;*/
+	
+	while(1)
+	{
+	
+	}
 	return 0;
 }
 
