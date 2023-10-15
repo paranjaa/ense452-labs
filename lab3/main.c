@@ -1,38 +1,50 @@
 //ENSE 452
 //Alok Paranjape
-//September 14th
-//Lab 3: Testing that this got added to github correctly
-//just some blinking LED code like lab 1
+//October 14th
+//Lab 3: Adde
+
+
+
 #include "stm32f10x.h"
+#include "usart.h"
+#include "CLI.h"
 
-
-void delay()
-{
-	
-	unsigned volatile int c, d;
-   
-   for (c = 1; c <= 3000; c++)
-       for (d = 1; d <= 3000; d++)
-       {}
-}
 
 int main() {
-		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-
-
-		GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
-		GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
-		
 	
-		while(1)
+	//calling the setup function
+	serial_open();
+	
+	startupCheck();
+	/*
+	//setting the max size of the array as 32, totally enough room
+	uint16_t testSize = 32;
+	uint8_t testCharArray[testSize];
+	
+	//used to leave the while loop, when it's zero
+	uint8_t quit_zero = 1;
+	
+	while(1)
+	{
+		//send out the initial prompt to enter a command
+		CLI_Prompt();
+		//record the user's input (and also echo it back to them so they can see)
+		CLI_Receive(testCharArray,testSize);
+		//check if they put in "quit"
+		quit_zero = CLI_Quit(testCharArray, testSize);
+		if(quit_zero == 0)
 		{
-			GPIOA->ODR |= GPIO_ODR_ODR5; //turn on the onboard light
-			delay();
-			GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5; //turn off the onboard light 
-			delay();
-		}
+			//if they do, leave the loop
+			break;
+		}	
+		//after that, read the input the user put in and call the right function for it
+		CLI_Input(testCharArray, testSize);
+		//then white out the spaces so it's ready for the next run
+		CLI_Clean(testCharArray, testSize);
 	
-	
-    //return 0;
+	}	
+	//also just going to turn off the LED so it doesn't stay on while nothing's happening
+	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;*/
+	return 0;
 }
 
