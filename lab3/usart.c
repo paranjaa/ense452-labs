@@ -18,13 +18,13 @@ void startupCheck(void)
 	//show the program is running by toggling the onboard LED
 	GPIOA->ODR |= GPIO_ODR_ODR5;
 	//wait a second, then turn it off
-	delay();
+	delay2();
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 
 }
 
 //delay for about a second, holdover from ENEL 351 code
-void delay(void)
+void delay2(void)
 {
 	
 	unsigned volatile int c, d;

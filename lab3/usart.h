@@ -20,7 +20,7 @@ void startupCheck(void);
 	
 
 /** adds in a ~1 second delay, only used for the startup check */
-void delay(void);
+void delay2(void);
 /** Configure and enable the device. */
 void serial_open(void);
 
