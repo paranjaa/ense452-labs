@@ -2,6 +2,8 @@
 #include "usart.h"
 #include "CLI.h"
 
+
+uint8_t recieved_char;
 int main() {
 	
 	//calling the setup function
@@ -37,7 +39,7 @@ int main() {
 		//CLI_Input(testCharArray, testSize);
 		//then white out the spaces so it's ready for the next run
 		//CLI_Clean(testCharArray, testSize);
-	
+		//startupCheck();
 	}	
 	//also just going to turn off the LED so it doesn't stay on while nothing's happening
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;

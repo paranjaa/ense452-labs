@@ -12,10 +12,12 @@ plus a startup and delay function I used for debugging
 #include "usart.h"
 #include "stm32f10x.h"
 
+volatile uint8_t recieved_char;
+
 
 void USART2_IRQHandler(void)
 {
-	//uint8_t value;
+	uint8_t value;
 	//volatile unsigned int USART_RXNE_checker = USART2->SR;
 	//USART_RXNE_checker &= USART_SR_RXNE;
 	//USART_RXNE_checker = USART_RXNE_checker >> 5;
@@ -26,20 +28,18 @@ void USART2_IRQHandler(void)
   //		value = USART2 ->DR;
 	//}
 	//then return it as the value
-	uint8_t value;
-	value = USART2 ->DR;
-	sendbyte(value);
+	recieved_char = USART2 ->DR;
 
 }
 
 void startupCheck(void)
 {	
 	//show the program is running by toggling the onboard LED
+
 	GPIOA->ODR |= GPIO_ODR_ODR5;
 	//wait a second, then turn it off
 	delay2();
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-
 }
 
 //delay for about a second, holdover from ENEL 351 code
