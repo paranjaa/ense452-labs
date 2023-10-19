@@ -2,12 +2,6 @@
 #include "usart.h"
 #include "CLI.h"
 
-void USART2_IRQHandler(void)
-{
-	GPIOA->ODR ^= GPIO_ODR_ODR5;
-
-}
-
 int main() {
 	
 	//calling the setup function
@@ -21,8 +15,7 @@ int main() {
 	//used to leave the while loop, when it's zero
 	uint8_t quit_zero = 1;
 	
-	NVIC_EnableIRQ(USART2_IRQn);
-	
+
 	
 	CLI_Prompt();
 	

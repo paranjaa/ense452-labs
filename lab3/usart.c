@@ -13,6 +13,25 @@ plus a startup and delay function I used for debugging
 #include "stm32f10x.h"
 
 
+void USART2_IRQHandler(void)
+{
+	//uint8_t value;
+	//volatile unsigned int USART_RXNE_checker = USART2->SR;
+	//USART_RXNE_checker &= USART_SR_RXNE;
+	//USART_RXNE_checker = USART_RXNE_checker >> 5;
+	
+	//if it's ready, then copy the value from the register
+	//if(USART_RXNE_checker == 1)
+	//{
+  //		value = USART2 ->DR;
+	//}
+	//then return it as the value
+	uint8_t value;
+	value = USART2 ->DR;
+	sendbyte(value);
+
+}
+
 void startupCheck(void)
 {	
 	//show the program is running by toggling the onboard LED
@@ -42,6 +61,26 @@ void serial_open(void)
 	RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN; 
   //Ensure the USART 2 clock is enabled. (It's in APB1)
 	RCC->APB1ENR |=  RCC_APB1ENR_USART2EN; 
+
+	
+	// Configure clocks and IO pins for TIM3 CH1
+	//TIM3->CR1 |= TIM_CR1_CEN; // Enable Timer3
+	//IM3->EGR |= TIM_EGR_UG; // Reinitialize the counter
+	//TIM3->CCMR1 |= TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1; // PWM mode 1
+	//TIM3->CCMR1 |= TIM_CCMR1_OC1PE | TIM_CCMR1_OC1FE; // Preload Enable, Fast Enable
+	//TIM3->CCER |= TIM_CCER_CC1E; // Enable CH1
+	//TIM3->PSC = 0x095F; // Divide 24 MHz by 2400 (PSC+1), PSC_CLK= 10000 Hz, 1 count = 0.1 ms
+	//ARR defines the period
+	//TIM3->ARR = 100; // 100 counts = 10 ms or 100 Hz 
+	//CCR defines the pulse width
+	//TIM3->CCR1 = 50; // 50 counts = 5 ms = 50% duty cycle
+	//TIM3->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN; // Enable Timer3
+	
+	 	
+	//enabling timer 2
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+	
+	
 	
 	
   //Configure PA2 for alternate function output Push-pull mode, max speed 50 MHz.
@@ -60,6 +99,9 @@ void serial_open(void)
 	GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
 	GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
 	
+	
+
+	
 	//set the UsartEnable bit for USART2, before setting TE and RE
 	USART2->CR1 |= USART_CR1_UE;
   //Enable the USART TransmitEnable and RecieveEnable bits
@@ -72,12 +114,20 @@ void serial_open(void)
 	//clear the 12th bit in CR1 so it's set to "Start bit, 8 Data bits, n Stop bit"
 	USART2 -> CR1 &= ~0x1000; 
 	
+	//set the USART Interrupt Enable, so it generates an interrupt when a character is recieved
+	USART2->CR1 |= USART_CR1_RXNEIE;
+	
+	
+	
 	//Set the baud rate to to 115200
 	//calculated out this first value for it, 19.5 with Mantissa: 1011 and Frac: 0.5
 	//USART2->BRR = 0x138;
 	//But it was probably wrong,
-	//and also Trevor showed a much less confusing way to set those bits
+	//and also Trevor showed me a much less confusing way to set those bits
 	USART2 -> BRR = (8 << 0) | (19 << 4);
+	
+	
+	NVIC_EnableIRQ(USART2_IRQn);
 	
 
 }
