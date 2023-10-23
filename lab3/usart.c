@@ -2,10 +2,11 @@
 ENSE 452
 Alok Paranjape
 200246370
-October 8th
+October 22nd
 usart.c has the function definitions for phase 1
 the basic sending and getting byte functions
 plus a startup and delay function I used for debugging
+Added in a bit for timing, but wasn't sure how to test it, especially with how late things got
 */
 
 
