@@ -2,14 +2,15 @@
 ENSE 452
 Alok Paranjape
 200246370
-October 8th
+October 22d
 CLI.c has the function definitions for phase 2
 starting with printing out whole arrays and getting user input
-
 and phase 3
 which is the different functions for each command for
 changing the LED, checking its state, and printing out the list
 plus a few more for picking a function and cleaning up between loops
+
+added a small change to use interrupts instead
 */
 
 #include "stm32f10x.h"
