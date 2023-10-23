@@ -16,9 +16,10 @@ plus a few more for picking a function and cleaning up between loops
 #include "usart.h"
 #include "CLI.h"
 
-//extern uint8_t recieved_char;
 
-volatile uint16_t testSize = 32;
+extern uint8_t recieved_char;
+extern uint8_t new_recieved;
+
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
@@ -41,7 +42,7 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
 	//reads in an initial input from the port before actually going
-	uint8_t currentChar = getbyte();
+	uint8_t currentChar = ' ';
 	//this is the working size, the current number of characters in the user's input is
 	//starting at the beggining of the array
 	uint16_t currentSize = 0;
@@ -49,36 +50,48 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 	//which they shouldn't, the commands are real short)
 	while(currentChar != '\r' && currentSize < Size)
 	{
-		//maybe should add a specific response for typing too much
-		//figured it would still be an error regardless 
-		
-		//read a character again
-		currentChar = getbyte();
-		
-		//if it's a regular ASCII letter (or symbol?)
-		if(currentChar > 32 && currentChar < 127)
+		//added in a check for if the interrupt happens, like with what was in main before
+		if(new_recieved == 1)
 		{
-				//print it out so the user can see it
+			//return it to the terminal
+			//then set the flag back to 0, so it checks again
+		
+			
+			//read a character again
+			currentChar = recieved_char;
+			new_recieved = 0;
+			//sendbyte(currentChar);
+			
+			//if it's a regular ASCII letter (or symbol?)
+			if(currentChar > 32 && currentChar < 127)
+			{
+					//print it out so the user can see it
+					sendbyte(currentChar);
+					//and change the current value in 
+					*(pData+currentSize) = currentChar;
+					//increment the current size so it's ready to go for the next character
+					currentSize++;
+			}
+			//if they hit the delete button (ASCII 127)
+			//(Also added a check so there isn't trying to reach a negative index)
+			if(currentChar == 127 && currentSize > 0)
+			{
+				//then send that byte as well 
+				//which removes the previous character in the terminal
 				sendbyte(currentChar);
-				//and change the current value in 
-				*(pData+currentSize) = currentChar;
-				//increment the current size so it's ready to go for the next character
-				currentSize++;
-		}
-		//if they hit the delete button (ASCII 127)
-		//(Also added a check so there isn't trying to reach a negative index)
-		if(currentChar == 127 && currentSize > 0)
-		{
-			//then send that byte as well 
-			//which removes the previous character in the terminal
-			sendbyte(currentChar);
-			//replace the current saved character with a space
-			*(pData+currentSize) = ' ';
-			//decrement the currentSize, so the next time
-			//the (recently deleted) spot gets modified
-			currentSize--;
-		}
+				//replace the current saved character with a space
+				*(pData+currentSize) = ' ';
+				//decrement the currentSize, so the next time
+				//the (recently deleted) spot gets modified
+				currentSize--;
+			}
 		
+	
+
+			
+		}
+
+	
 	}
 	
 	//then, for the rest of the array past the currentSize
@@ -92,6 +105,9 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 		}
 	
 	}
+	
+	
+	//sendbyte('-');
 	
 
 
