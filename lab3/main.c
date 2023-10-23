@@ -1,3 +1,11 @@
+/*
+ENSE 452
+Alok Paranjape
+200246370
+October 22nd
+main.c just loops calls the functions for running the CLI, like prompt
+*/
+
 #include "stm32f10x.h"
 #include "usart.h"
 #include "CLI.h"
@@ -47,9 +55,11 @@ int main() {
 			}	
 			//after that, read the input the user put in and call the right function for it
 			CLI_Input(testCharArray, testSize);
-			
+			//then white out the spaces so it's ready for the next run
+			CLI_Clean(testCharArray, testSize);
 			//then call the prompt again so they can enter the next command
 			CLI_Prompt();
+		
 			
 		}
 
@@ -59,21 +69,3 @@ int main() {
 	return 0;
 }
 
-
-		
-		//send out the initial prompt to enter a command
-		//CLI_Prompt();
-		//record the user's input (and also echo it back to them so they can see)
-		//CLI_Receive(testCharArray,testSize);
-		//check if they put in "quit"
-		//quit_zero = CLI_Quit(testCharArray, testSize);
-		//if(quit_zero == 0)
-		//{
-			//if they do, leave the loop
-		//	break;
-		//}	
-		//after that, read the input the user put in and call the right function for it
-		//CLI_Input(testCharArray, testSize);
-		//then white out the spaces so it's ready for the next run
-		//CLI_Clean(testCharArray, testSize);
-		//startupCheck();
