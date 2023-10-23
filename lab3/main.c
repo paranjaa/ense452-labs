@@ -3,13 +3,14 @@
 #include "CLI.h"
 
 
-uint8_t recieved_char;
+//uint8_t recieved_char;
+
 int main() {
 	
 	//calling the setup function
 	serial_open();
 	
-	//startupCheck();
+	startupCheck();
 	//setting the max size of the array as 32, totally enough room
 	uint16_t testSize = 32;
 	uint8_t testCharArray[testSize];

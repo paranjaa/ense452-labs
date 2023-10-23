@@ -16,10 +16,9 @@ plus a few more for picking a function and cleaning up between loops
 #include "usart.h"
 #include "CLI.h"
 
-extern uint8_t recieved_char;
+//extern uint8_t recieved_char;
 
 volatile uint16_t testSize = 32;
-volatile:	uint8_t testCharArray[testSize];
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
