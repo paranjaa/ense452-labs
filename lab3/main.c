@@ -3,7 +3,7 @@ ENSE 452
 Alok Paranjape
 200246370
 October 22nd
-main.c just loops calls the functions for running the CLI, like prompt
+main.c just loops calls the functions for running the CLI, like prompting the user and reading input
 */
 
 #include "stm32f10x.h"

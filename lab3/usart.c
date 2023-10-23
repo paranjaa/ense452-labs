@@ -187,16 +187,46 @@ int sendbyte(uint8_t b)
 	//TXE is in bit 7, move it over to position 0 for easy checking
 	USART_TXE_checker = USART_TXE_checker >> 7;
 	
+	//start up the timer
+	TIM2->CR1 |= TIM_CR1_CEN;
+	//set the initial value to 0
+	TIM2->CNT = 0;
+	
+	//make a value to check the timer, AND it with the flag to just get that bit
+	volatile unsigned int timer2_checker = TIM2->SR;
+	timer2_checker &= TIM_SR_UIF;
 	while(USART_TXE_checker != 1)
 	{
 		//continue checking the TXE while in the loop
 		USART_TXE_checker = USART2->SR;
 		USART_TXE_checker &= USART_SR_TXE;
 		USART_TXE_checker = USART_TXE_checker >> 7;
+		
+		//also keep checking the timer while doing this
+		timer2_checker = TIM2->SR;
+		timer2_checker &= TIM_SR_UIF;
+		//if it equals one (since everything else got filtered out)
+		//then there's a timeout error
+		if(timer2_checker)
+		{
+			TIM2->SR &= ~TIM_SR_UIF; //clear out the update flag for the next call
+			TIM2->CR1 &= ~TIM_CR1_CEN; //stop the timer from running
+			TIM2->CNT = 0; //reset the counter
+			//return 1, still not really sure how to make it fail though
+			return 1;
+		}
+		
+		
 
 	}
 	//after exiting the loop, send the bytes by copying them into the DR register
 	USART2->DR = b;
+	
+	//stop the timer and reset the counter if it gets out the regular way as well
+	TIM2->CR1 &= ~TIM_CR1_CEN;
+	TIM2->CR1 = 0;
+	
+	
 	//then return 0, wasn't sure how to make it fail, it just kept going through or getting stuck
 	return 0;
 }	
@@ -204,6 +234,9 @@ int sendbyte(uint8_t b)
 //also based on code from ENEL 351, also with a few changes, less
 uint8_t getbyte(void)
 {
+	//adding in a value to get the time
+	
+	
 	//get the SR register, mask it
 	//RXNE is in position 5, move it so it's easy to check
 	uint8_t value;
@@ -211,6 +244,7 @@ uint8_t getbyte(void)
 	USART_RXNE_checker &= USART_SR_RXNE;
 	USART_RXNE_checker = USART_RXNE_checker >> 5;
 	
+
 	//if it's ready, then copy the value from the register
 	if(USART_RXNE_checker == 1)
 	{
