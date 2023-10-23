@@ -21,13 +21,19 @@ volatile uint8_t new_recieved;
 void USART2_IRQHandler(void)
 {
 	
+	
+	
 	//read the recieved data from the flag
 	//should probably add a check for the RXNE bit
 	recieved_char = USART2 ->DR;
 	
+
+	
 	//then set the flag to show it got a new character
 	new_recieved = 1;
 	
+	//also clearing the flag, suprised it was working without doing this
+	USART2->SR &= ~USART_SR_RXNE;
 
 }
 
