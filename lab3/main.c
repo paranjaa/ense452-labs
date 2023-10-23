@@ -3,6 +3,8 @@
 #include "CLI.h"
 
 
+extern uint8_t recieved_char;
+extern uint8_t new_recieved;
 //uint8_t recieved_char;
 
 int main() {
@@ -24,6 +26,14 @@ int main() {
 	
 	while(1)
 	{
+		//when it gets a new character (i.e, from the flag)
+		if(new_recieved == 1)
+		{
+			//return it to the terminal
+			sendbyte(recieved_char);
+			//then set the flag back to 0, so it checks again
+			new_recieved = 0;
+		}
 		
 		//send out the initial prompt to enter a command
 		//CLI_Prompt();

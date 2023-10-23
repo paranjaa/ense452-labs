@@ -13,22 +13,21 @@ plus a startup and delay function I used for debugging
 #include "stm32f10x.h"
 
 volatile uint8_t recieved_char;
+volatile uint8_t new_recieved;
+
+
 
 
 void USART2_IRQHandler(void)
 {
-	uint8_t value;
-	//volatile unsigned int USART_RXNE_checker = USART2->SR;
-	//USART_RXNE_checker &= USART_SR_RXNE;
-	//USART_RXNE_checker = USART_RXNE_checker >> 5;
 	
-	//if it's ready, then copy the value from the register
-	//if(USART_RXNE_checker == 1)
-	//{
-  //		value = USART2 ->DR;
-	//}
-	//then return it as the value
+	//read the recieved data from the flag
+	//should probably add a check for the RXNE bit
 	recieved_char = USART2 ->DR;
+	
+	//then set the flag to show it got a new character
+	new_recieved = 1;
+	
 
 }
 
