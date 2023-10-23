@@ -66,27 +66,22 @@ void serial_open(void)
 	RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN; 
   //Ensure the USART 2 clock is enabled. (It's in APB1)
 	RCC->APB1ENR |=  RCC_APB1ENR_USART2EN; 
-
-	
-	// Configure clocks and IO pins for TIM3 CH1
-	//TIM3->CR1 |= TIM_CR1_CEN; // Enable Timer3
-	//IM3->EGR |= TIM_EGR_UG; // Reinitialize the counter
-	//TIM3->CCMR1 |= TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1; // PWM mode 1
-	//TIM3->CCMR1 |= TIM_CCMR1_OC1PE | TIM_CCMR1_OC1FE; // Preload Enable, Fast Enable
-	//TIM3->CCER |= TIM_CCER_CC1E; // Enable CH1
-	//TIM3->PSC = 0x095F; // Divide 24 MHz by 2400 (PSC+1), PSC_CLK= 10000 Hz, 1 count = 0.1 ms
-	//ARR defines the period
-	//TIM3->ARR = 100; // 100 counts = 10 ms or 100 Hz 
-	//CCR defines the pulse width
-	//TIM3->CCR1 = 50; // 50 counts = 5 ms = 50% duty cycle
-	//TIM3->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN; // Enable Timer3
 	
 	 	
-	//enabling timer 2
+	//enabling timer 2 clock
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 	
+
 	
+	//setting the prescaler value to one less than the clock speed (wrongly assumed it was 24 MHZ before)
+	TIM2->PSC = 0x8C9F;
 	
+	//setting the auto reset value to 10ms (or 100hz), might want to double check that, since it wasn't for 
+	TIM2->ARR = 100;
+
+	
+	// Enabling Timer2
+	TIM3->CR2 |= TIM_CR1_ARPE | TIM_CR1_CEN; 
 	
   //Configure PA2 for alternate function output Push-pull mode, max speed 50 MHz.
 	//MODE 11: Output, 50 Mhz
@@ -132,7 +127,11 @@ void serial_open(void)
 	USART2 -> BRR = (8 << 0) | (19 << 4);
 	
 	
+	//enabling the interrupt for USART2
 	NVIC_EnableIRQ(USART2_IRQn);
+	
+	//enabling timer 2 interrupt
+	NVIC_EnableIRQ(TIM2_IRQn);
 	
 
 }
