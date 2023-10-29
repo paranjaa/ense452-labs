@@ -20,7 +20,7 @@ int main() {
 	//calling the setup function
 	serial_open();
 	
-	startupCheck();
+	//startupCheck();
 	
 	
 	//setting the max size of the array as 8, didn't need 32
@@ -36,11 +36,43 @@ int main() {
 	
 	CLI_Prompt();
 	
-	while(1)
+	while(quit_zero == 1)
 	{
+		
+		
 		//when it gets a new character (i.e, from the flag)
 		if(new_recieved == 1)
 		{
+			//sendbyte(recieved_char);
+			//new_recieved = 0;
+			CLI_Receive(testCharArray,testSize);
+			
+			quit_zero = CLI_Quit(testCharArray, testSize);
+			if(quit_zero == 0)
+			{
+				//if they do, leave the loop
+				break;
+			}	
+			
+			CLI_Input(testCharArray, testSize);
+			CLI_Clean(testCharArray, testSize);
+			CLI_Prompt();
+
+		
+			
+		}
+		
+
+	}	
+	//also just going to turn off the LED so it doesn't stay on while nothing's happening
+	startupCheck();
+	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+	return 0;
+}
+
+			/*
+			//CLI_Transmit(testCharArray,testSize);
+
 			//return it to the terminal
 			//sendbyte(recieved_char);
 			//then set the flag back to 0, so it checks again
@@ -58,14 +90,4 @@ int main() {
 			//then white out the spaces so it's ready for the next run
 			CLI_Clean(testCharArray, testSize);
 			//then call the prompt again so they can enter the next command
-			CLI_Prompt();
-		
-			
-		}
-
-	}	
-	//also just going to turn off the LED so it doesn't stay on while nothing's happening
-	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-	return 0;
-}
-
+			CLI_Prompt();*/

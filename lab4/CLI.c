@@ -61,13 +61,13 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 			//read a character again
 			currentChar = recieved_char;
 			new_recieved = 0;
-			//sendbyte(currentChar);
+			sendbyte(currentChar);
 			
 			//if it's a regular ASCII letter (or symbol?)
 			if(currentChar > 32 && currentChar < 127)
 			{
 					//print it out so the user can see it
-					sendbyte(currentChar);
+					//sendbyte(currentChar);
 					//and change the current value in 
 					*(pData+currentSize) = currentChar;
 					//increment the current size so it's ready to go for the next character
@@ -79,7 +79,7 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 			{
 				//then send that byte as well 
 				//which removes the previous character in the terminal
-				sendbyte(currentChar);
+				//sendbyte(currentChar);
 				//replace the current saved character with a space
 				*(pData+currentSize) = ' ';
 				//decrement the currentSize, so the next time
