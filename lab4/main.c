@@ -25,10 +25,34 @@ int main() {
 	
 	//setting the max size of the array as 8 (as shown with the max length on ledquery
 	//, didn't need 32
-	uint16_t testSize = 8;
+	uint16_t testSize = 9;
 	uint8_t testCharArray[testSize];
 	
+
 	
+	/*
+	uint8_t scroll_ANSI[] = "\x1b[5;15r";
+	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
+	
+	uint8_t clear_ANSI[] = "\x1b[2J";
+	CLI_Transmit(clear_ANSI, (sizeof(clear_ANSI) / sizeof(uint8_t)));
+	
+	uint8_t top_ANSI[] = "\x1b[1;1H";
+	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
+	
+	
+	uint8_t status_msg[] = "The LED is Turned OFF";
+	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
+	
+	uint8_t mid_ANSI[] = "\x1b[6;1H";
+	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
+	*/
+	
+
+	
+	/*
+	
+		
 	//changing the cursor to a blinking bar, mostly for the look of it
 	//not sure why it doesn't work, maybe PUTTY has specific display settings not recognized by ASCII?
 	//ESC [ 5 SP q
@@ -40,7 +64,8 @@ int main() {
 	//ESC[<t>;<b>r
 		
 	//set a scroll region starting at 5 and going to 25?
-	uint8_t scroll_ANSI[] = "\x1b[5;25r";
+	//using the example one instead
+	uint8_t scroll_ANSI[] = "\x1b[10r";
 	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
 	
 	//erase 2 lines in display?
@@ -56,10 +81,12 @@ int main() {
 	uint8_t status_msg[] = "LED STATUS: OFF";
 	CLI_Transmit(status_msg, sizeof(status_msg));	
 	
-	uint8_t return_ANSI[] = "		\x1b[6;1H";
+	uint8_t return_ANSI[] = "		\x1b[0;1H";
 	CLI_Transmit(return_ANSI, (sizeof(return_ANSI) / sizeof(uint8_t)));
-
+	*/
 	//used to leave the while loop, when it's zero
+	
+	
 	uint8_t quit_zero = 1;
 	
 

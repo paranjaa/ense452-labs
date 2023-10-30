@@ -120,7 +120,7 @@ void CLI_Prompt(void)
 	//makes an array for this string
 	//and then prints it out using the size
 	//probably a nicer way to do this
-	uint8_t prompt_msg[] = "\r\nEnter Command:";
+	uint8_t prompt_msg[] = "\r\nEnter Command:\r\n";
 	CLI_Transmit(prompt_msg, (sizeof(prompt_msg) / sizeof(uint8_t)));
 
 }
@@ -179,38 +179,31 @@ void CLI_Query(void)
 void CLI_LEDON(void)
 {
 	//same printing with CLI_Transmit as usual
-	uint8_t on_msg[] = "> Turning LED ON";
+	uint8_t on_msg[] = "\r\n> Turning LED ON";
 	CLI_Transmit(on_msg, (sizeof(on_msg) / sizeof(uint8_t)));
 	//turn the LED on like the startup checker function
 	GPIOA->ODR |= GPIO_ODR_ODR5;
 	
 	//added some ANSI code here
-	
-	//save the cursor location after printing the new message
-	// ESC [ s
-	
+	/*
 	uint8_t save_cursor_ANSI[] = "\x1b[s";
 	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
 	
-	//move the cursor to the top of the screen so it can print out the new messages
-	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
-	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
+	uint8_t ANSI_move_cursor_top[] = "\x1b[1;1H";
+	CLI_Transmit(ANSI_move_cursor_top, (sizeof(ANSI_move_cursor_top) / sizeof(uint8_t)));
 	
-	//uint8_t title_msg[] = "ENSE 452 Lab 4";
-	//CLI_Transmit(title_msg, sizeof(title_msg));	
+	uint8_t clear_line[] = "\x1b[K";
+	CLI_Transmit(clear_line, (sizeof(clear_line) / sizeof(uint8_t)));
 	
-	uint8_t status_msg[] = "LED STATUS: ON";
-	CLI_Transmit(status_msg, sizeof(status_msg));	
+	uint8_t status_msg[] = "The LED is Turned ON";
+	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
+
+	uint8_t scroll_region[] = "\x1b[5;15r";
+	CLI_Transmit(scroll_region, (sizeof(scroll_region) / sizeof(uint8_t)));
 	
-	//remake the scroll region from before
-	uint8_t scroll_ANSI[] = "\x1b[5;25r";
-	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
-	
-	//put the cursor location back to where it was before
-	// ESC [ u
-	uint8_t replace_cursor_ANSI[] = "\x1b[s";
-	CLI_Transmit(replace_cursor_ANSI, (sizeof(replace_cursor_ANSI) / sizeof(uint8_t)));
-	
+		uint8_t resotre_cursor[] = "\x1b[u";
+	CLI_Transmit(resotre_cursor, (sizeof(resotre_cursor) / sizeof(uint8_t)));
+	*/
 }
 
 
@@ -222,28 +215,27 @@ void CLI_LEDOFF(void)
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	
 	//also added ANSI code here, but the message update is different
-	
-	uint8_t save_cursor_ANSI[] = "\x1b[s";
+	/*
+		uint8_t save_cursor_ANSI[] = "\x1b[s";
 	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
 	
-	//move the cursor to the top of the screen so it can print out the new messages
-	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
-	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
+	uint8_t ANSI_move_cursor_top[] = "\x1b[1;1H";
+	CLI_Transmit(ANSI_move_cursor_top, (sizeof(ANSI_move_cursor_top) / sizeof(uint8_t)));
 	
-	uint8_t title_msg[] = "ENSE 452 Lab 4";
-	CLI_Transmit(title_msg, sizeof(title_msg));	
+	uint8_t clear_line[] = "\x1b[K";
+	CLI_Transmit(clear_line, (sizeof(clear_line) / sizeof(uint8_t)));
 	
-	uint8_t status_msg_off[] = "LED STATUS: OFF";
-	CLI_Transmit(status_msg_off, sizeof(status_msg_off));	
+	uint8_t status_msg[] = "The LED is Turned OFF";
+	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
+
+	uint8_t scroll_region[] = "\x1b[5;15r";
+	CLI_Transmit(scroll_region, (sizeof(scroll_region) / sizeof(uint8_t)));
 	
-	//remake the scroll region from before
-	uint8_t scroll_ANSI[] = "\x1b[10;35r";
-	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
+		uint8_t resotre_cursor[] = "\x1b[u";
+	CLI_Transmit(resotre_cursor, (sizeof(resotre_cursor) / sizeof(uint8_t)));*/
 	
-	//put the cursor location back to where it was before
-	// ESC [ u
-	uint8_t replace_cursor_ANSI[] = "\x1b[u";
-	CLI_Transmit(replace_cursor_ANSI, (sizeof(replace_cursor_ANSI) / sizeof(uint8_t)));
+	
+
 }
 
 
