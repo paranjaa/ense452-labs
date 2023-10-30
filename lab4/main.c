@@ -30,19 +30,20 @@ int main() {
 	
 
 	//clear the screen first
-	uint8_t clear_ANSI[] = "\x1b[10J";
+	uint8_t clear_ANSI[] = "\x1b[2J";
 	CLI_Transmit(clear_ANSI, (sizeof(clear_ANSI) / sizeof(uint8_t)));
 	
 	//position the cursor so it's at the start of the screen
 	uint8_t top_ANSI[] = "\x1b[0;0H";
 	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
-	
-	uint8_t status_msg[] = "LED Status: OFF";
+	uint8_t title_msg[] = "ENSE452 Lab 4";
+	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
+	uint8_t status_msg[] = "\r\nLED Status: OFF";
 	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
 	
-	//make a scrollable window 10 lines down? Like the example
-	uint8_t mid_ANSI[] = "\x1b[10;r";
+	//make a scrollable window with the top lines down? sort of like the example
+	uint8_t mid_ANSI[] = "\x1b[3;r";
 	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
 	
 	
