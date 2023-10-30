@@ -32,17 +32,26 @@ int main() {
 	//esc = \x1b
 	//ESC[<t>;<b>r
 		
-	uint8_t scroll_ascii[] = "\x1b[5;25r";
-	CLI_Transmit(scroll_ascii, (sizeof(scroll_ascii) / sizeof(uint8_t)));
+	//set a scroll region starting at 5 and going to 25?
+	uint8_t scroll_ANSI[] = "\x1b[10;35r";
+	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
 	
+	//erase 2 lines in display?
+	uint8_t clear_ANSI[] = "	\x1b[2J";
+	CLI_Transmit(clear_ANSI, (sizeof(clear_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t clear_ascii[] = "	\x1b[2J";
-	CLI_Transmit(clear_ascii, (sizeof(clear_ascii) / sizeof(uint8_t)));
+	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
+	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t top_cursor[] = "	\x1b[2J";
-	CLI_Transmit(top_cursor, (sizeof(top_cursor) / sizeof(uint8_t)));
+	uint8_t title_msg[] = "ENSE 452 Lab 4";
+	CLI_Transmit(title_msg, sizeof(title_msg));	
+	
+	uint8_t status_msg[] = "LED STATUS: OFF";
+	CLI_Transmit(status_msg, sizeof(status_msg));	
+	
+	uint8_t return_ANSI[] = "		\x1b[6;1H";
+	CLI_Transmit(return_ANSI, (sizeof(return_ANSI) / sizeof(uint8_t)));
 
-	
 	//used to leave the while loop, when it's zero
 	uint8_t quit_zero = 1;
 	
