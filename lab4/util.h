@@ -1,3 +1,12 @@
+/*
+ENSE 452 Lab 4
+Alok Paranjape
+200246370
+October 29th
+Again, carryover from 351, just some function signatures and definitions
+guess it was a bit useful for seeing if it was actually running at first
+*/
+
 #include <stdint.h>
 
 void delay(uint32_t delay); // A delay loop which blocks while a value is decremented to 0

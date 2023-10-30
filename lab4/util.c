@@ -1,3 +1,11 @@
+/*
+ENSE 452 Lab 4
+Alok Paranjape
+200246370
+October 29th
+Carryover from 351, has a delay function and some examples of startup code
+Realized I didn't have a comment here before
+*/
 
  #include "stm32f10x.h"
  #include "util.h"

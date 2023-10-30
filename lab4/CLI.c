@@ -1,16 +1,14 @@
 /*
-ENSE 452
+ENSE 452 Lab 4
 Alok Paranjape
 200246370
-October 22d
-CLI.c has the function definitions for phase 2
-starting with printing out whole arrays and getting user input
-and phase 3
-which is the different functions for each command for
-changing the LED, checking its state, and printing out the list
-plus a few more for picking a function and cleaning up between loops
+October 29th
+Added ANSI code to CLI_LEDON and CLI_LEDOFF
+Makes them update the status above the scrollable part then move back to it
 
-added a small change to use interrupts instead
+Also changed CLI_Transmit to automatically put multiple new lines, 
+it was getting in the way with moving the cursor at the same time as the ANSI did
+opted to put them in the string instead, with a \r \n in each message now
 */
 
 #include "stm32f10x.h"
@@ -188,23 +186,24 @@ void CLI_LEDON(void)
 	uint8_t save_cursor_ANSI[] = "\x1b[s";
 	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
 	
-	//position the cursor so it's one line down from the start of the screen
+	//position the cursor so it's one line down from the start of the screen (starts at 1?)
 	uint8_t top_ANSI[] = "\x1b[2;0H";
 	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
-	
-	
+	//erase that line (so the last F in "LED Status: OFF" doesn't stick around
+	//tried using "\x1b[K", but it kept just printing J for some reason
 	uint8_t ANSI_clear[] = "\x1b[K";
 	CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 	
+	//write on the line to make a new status
 	uint8_t status_msg[] = "LED Status: ON";
 	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
 	
-	//make a scrollable window with the top lines down? sort of like the example
+	//remake the scrollable window again, same deal with 3 lines down
 	uint8_t mid_ANSI[] = "\x1b[3;r";
 	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
 		
-		
+	//put the cursor back to where it was before
 	uint8_t return_cursor_ANSI[] = "\x1b[u";
 	CLI_Transmit(return_cursor_ANSI, (sizeof(return_cursor_ANSI) / sizeof(uint8_t)));
 
@@ -218,7 +217,7 @@ void CLI_LEDOFF(void)
 	//turn the LED off, also like the startup checker function
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	
-	//also added ANSI code here, but the message update is different
+	//also added ANSI code here, mostly the same but the message update is different
 
 	uint8_t save_cursor_ANSI[] = "\x1b[s";
 	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
@@ -235,7 +234,6 @@ void CLI_LEDOFF(void)
 	uint8_t status_msg[] = "LED Status: OFF";
 	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
 	
-	//make a scrollable window with the top lines down? sort of like the example
 	uint8_t mid_ANSI[] = "\x1b[3;r";
 	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
 		

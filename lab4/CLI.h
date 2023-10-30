@@ -1,10 +1,9 @@
 /*
-ENSE 452
+ENSE 452 Lab 4
 Alok Paranjape
 200246370
-October 8th
-CLI.h has the function header comments for phase 2 and 3
-Tried to keep it similar the the ones in the assignment
+October 29th
+No changes from previous lab, other than updating this header file
 */
 
 #include "stm32f10x.h"
