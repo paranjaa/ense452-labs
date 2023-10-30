@@ -183,6 +183,34 @@ void CLI_LEDON(void)
 	CLI_Transmit(on_msg, (sizeof(on_msg) / sizeof(uint8_t)));
 	//turn the LED on like the startup checker function
 	GPIOA->ODR |= GPIO_ODR_ODR5;
+	
+	//added some ANSI code here
+	
+	//save the cursor location after printing the new message
+	// ESC [ s
+	
+	uint8_t save_cursor_ANSI[] = "\x1b[s";
+	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
+	
+	//move the cursor to the top of the screen so it can print out the new messages
+	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
+	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
+	
+	uint8_t title_msg[] = "ENSE 452 Lab 4";
+	CLI_Transmit(title_msg, sizeof(title_msg));	
+	
+	uint8_t status_msg[] = "LED STATUS: ON";
+	CLI_Transmit(status_msg, sizeof(status_msg));	
+	
+	//remake the scroll region from before
+	uint8_t scroll_ANSI[] = "\x1b[10;35r";
+	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
+	
+	//put the cursor location back to where it was before
+	// ESC [ u
+	uint8_t replace_cursor_ANSI[] = "\x1b[s";
+	CLI_Transmit(replace_cursor_ANSI, (sizeof(replace_cursor_ANSI) / sizeof(uint8_t)));
+	
 }
 
 
@@ -192,6 +220,30 @@ void CLI_LEDOFF(void)
 	CLI_Transmit(off_msg, (sizeof(off_msg) / sizeof(uint8_t)));
 	//turn the LED off, also like the startup checker function
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
+	
+	//also added ANSI code here, but the message update is different
+	
+	uint8_t save_cursor_ANSI[] = "\x1b[s";
+	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
+	
+	//move the cursor to the top of the screen so it can print out the new messages
+	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
+	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
+	
+	uint8_t title_msg[] = "ENSE 452 Lab 4";
+	CLI_Transmit(title_msg, sizeof(title_msg));	
+	
+	uint8_t status_msg_off[] = "LED STATUS: OFF";
+	CLI_Transmit(status_msg_off, sizeof(status_msg_off));	
+	
+	//remake the scroll region from before
+	uint8_t scroll_ANSI[] = "\x1b[10;35r";
+	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
+	
+	//put the cursor location back to where it was before
+	// ESC [ u
+	uint8_t replace_cursor_ANSI[] = "\x1b[u";
+	CLI_Transmit(replace_cursor_ANSI, (sizeof(replace_cursor_ANSI) / sizeof(uint8_t)));
 }
 
 
