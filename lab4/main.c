@@ -23,17 +23,33 @@ int main() {
 	//startupCheck();
 	
 	
-	//setting the max size of the array as 8, didn't need 32
+	//setting the max size of the array as 8 (as shown with the max length on ledquery
+	//, didn't need 32
 	uint16_t testSize = 8;
 	uint8_t testCharArray[testSize];
+	
+
+	//esc = \x1b
+	//ESC[<t>;<b>r
+		
+	uint8_t scroll_ascii[] = "\x1b[5;25r";
+	CLI_Transmit(scroll_ascii, (sizeof(scroll_ascii) / sizeof(uint8_t)));
+	
+	
+	uint8_t clear_ascii[] = "	\x1b[2J";
+	CLI_Transmit(clear_ascii, (sizeof(clear_ascii) / sizeof(uint8_t)));
+	
+	uint8_t top_cursor[] = "	\x1b[2J";
+	CLI_Transmit(top_cursor, (sizeof(top_cursor) / sizeof(uint8_t)));
+
 	
 	//used to leave the while loop, when it's zero
 	uint8_t quit_zero = 1;
 	
 	
-
 	
 	
+	//print the initial message
 	CLI_Prompt();
 	
 	while(quit_zero == 1)
@@ -53,7 +69,6 @@ int main() {
 				//if they do, leave the loop
 				break;
 			}	
-			
 			CLI_Input(testCharArray, testSize);
 			CLI_Clean(testCharArray, testSize);
 			CLI_Prompt();
@@ -65,7 +80,7 @@ int main() {
 
 	}	
 	//also just going to turn off the LED so it doesn't stay on while nothing's happening
-	startupCheck();
+	//startupCheck();
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	return 0;
 }
