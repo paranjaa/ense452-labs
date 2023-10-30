@@ -219,45 +219,36 @@ void CLI_LEDOFF(void)
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
 	
 	//also added ANSI code here, but the message update is different
+
+	uint8_t save_cursor_ANSI[] = "\x1b[s";
+	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
 	
-	//position the cursor so it's at the start of the screen
-	uint8_t top_ANSI[] = "\x1b[0;0H";
+	//position the cursor so it's one line down from the start of the screen
+	uint8_t top_ANSI[] = "\x1b[2;0H";
 	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t title_msg[] = "ENSE452 Lab 4";
-	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
-	uint8_t status_msg[] = "\r\nLED Status: OFF";
+	
+	
+	uint8_t ANSI_clear[] = "\x1b[K";
+	CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
+	
+	uint8_t status_msg[] = "LED Status: OFF";
 	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
 	
 	//make a scrollable window with the top lines down? sort of like the example
 	uint8_t mid_ANSI[] = "\x1b[3;r";
 	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
-	/*
-		uint8_t save_cursor_ANSI[] = "\x1b[s";
-	CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
-	
-	uint8_t ANSI_move_cursor_top[] = "\x1b[1;1H";
-	CLI_Transmit(ANSI_move_cursor_top, (sizeof(ANSI_move_cursor_top) / sizeof(uint8_t)));
-	
-	uint8_t clear_line[] = "\x1b[K";
-	CLI_Transmit(clear_line, (sizeof(clear_line) / sizeof(uint8_t)));
-	
-	uint8_t status_msg[] = "The LED is Turned OFF";
-	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
+		
+		
+	uint8_t return_cursor_ANSI[] = "\x1b[u";
+	CLI_Transmit(return_cursor_ANSI, (sizeof(return_cursor_ANSI) / sizeof(uint8_t)));
 
-	uint8_t scroll_region[] = "\x1b[5;15r";
-	CLI_Transmit(scroll_region, (sizeof(scroll_region) / sizeof(uint8_t)));
-	
-		uint8_t resotre_cursor[] = "\x1b[u";
-	CLI_Transmit(resotre_cursor, (sizeof(resotre_cursor) / sizeof(uint8_t)));*/
-	
 	
 
 }
 
 
-void CLI_Input(uint8_t *pData, uint16_t Size)
-{
+void CLI_Input(uint8_t *pData, uint16_t Size){
 	//look at the first set of value at (and from) the pointer
 	//based on how the array (and size) are made, 
 	//shouldn't get anywhere near the bounds, current commands are like 7 letters

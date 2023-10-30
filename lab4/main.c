@@ -37,7 +37,7 @@ int main() {
 	uint8_t top_ANSI[] = "\x1b[0;0H";
 	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t title_msg[] = "ENSE452 Lab 4";
+	uint8_t title_msg[] = "ENSE452 Lab 4 CLI";
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	uint8_t status_msg[] = "\r\nLED Status: OFF";
 	CLI_Transmit(status_msg, (sizeof(status_msg) / sizeof(uint8_t)));
