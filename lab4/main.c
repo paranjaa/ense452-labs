@@ -28,12 +28,19 @@ int main() {
 	uint16_t testSize = 8;
 	uint8_t testCharArray[testSize];
 	
+	
+	//changing the cursor to a blinking bar, mostly for the look of it
+	//not sure why it doesn't work, maybe PUTTY has specific display settings not recognized by ASCII?
+	//ESC [ 5 SP q
+	//uint8_t better_cursor_ANSI[] = "		\x1b[ 4 SP q";
+	//CLI_Transmit(better_cursor_ANSI, (sizeof(better_cursor_ANSI) / sizeof(uint8_t)));
+	
 
 	//esc = \x1b
 	//ESC[<t>;<b>r
 		
 	//set a scroll region starting at 5 and going to 25?
-	uint8_t scroll_ANSI[] = "\x1b[10;35r";
+	uint8_t scroll_ANSI[] = "\x1b[5;25r";
 	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
 	
 	//erase 2 lines in display?
@@ -43,8 +50,8 @@ int main() {
 	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
 	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t title_msg[] = "ENSE 452 Lab 4";
-	CLI_Transmit(title_msg, sizeof(title_msg));	
+	//uint8_t title_msg[] = "ENSE 452 Lab 4";
+	//CLI_Transmit(title_msg, sizeof(title_msg));	
 	
 	uint8_t status_msg[] = "LED STATUS: OFF";
 	CLI_Transmit(status_msg, sizeof(status_msg));	
@@ -55,9 +62,7 @@ int main() {
 	//used to leave the while loop, when it's zero
 	uint8_t quit_zero = 1;
 	
-	
-	
-	
+
 	//print the initial message
 	CLI_Prompt();
 	

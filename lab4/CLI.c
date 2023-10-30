@@ -26,16 +26,16 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
 	//prints out a new line and return first
 	//so it doesn't cover/blend with previous print
-	sendbyte('\r');
-	sendbyte('\n');
+	//sendbyte('\r');
+	//sendbyte('\n');
 	//then just loops through the array and prints everything
 	for(uint16_t i = 0; i < Size; i++)
 	{
 		sendbyte( *(pData + i) );
 	}
 	//another line after for more separation
-	sendbyte('\r');
-	sendbyte('\n');
+	//sendbyte('\r');
+	//sendbyte('\n');
 
 }
 
@@ -120,7 +120,7 @@ void CLI_Prompt(void)
 	//makes an array for this string
 	//and then prints it out using the size
 	//probably a nicer way to do this
-	uint8_t prompt_msg[] = "Enter Command:";
+	uint8_t prompt_msg[] = "\r\nEnter Command:";
 	CLI_Transmit(prompt_msg, (sizeof(prompt_msg) / sizeof(uint8_t)));
 
 }
@@ -131,17 +131,17 @@ void CLI_Help(void)
 	//same as prompt, just a for a bunch of different messages this time
 	//not sure if this is the best way to format it, 
 	//especially if later commands have arguements
-	uint8_t help_msg1[] = "> List of commands:";
+	uint8_t help_msg1[] = "\r\n> List of commands:";
 	CLI_Transmit(help_msg1, (sizeof(help_msg1) / sizeof(uint8_t)));
-	uint8_t help_msg2[] = "	 ledon - turns LED on";
+	uint8_t help_msg2[] = "\r\n	 ledon - turns LED on";
 	CLI_Transmit(help_msg2, (sizeof(help_msg2) / sizeof(uint8_t)));
-	uint8_t help_msg3[] = "	 ledoff - turns LED off";
+	uint8_t help_msg3[] = "\r\n	 ledoff - turns LED off";
 	CLI_Transmit(help_msg3, (sizeof(help_msg3) / sizeof(uint8_t)));
-	uint8_t help_msg4[] = "	 ledquery - prints LED state";
+	uint8_t help_msg4[] = "\r\n	 ledquery - prints LED state";
 	CLI_Transmit(help_msg4, (sizeof(help_msg4) / sizeof(uint8_t)));
-	uint8_t help_msg5[] = "	 help - prints list of commands (as you can see)";
+	uint8_t help_msg5[] = "\r\n	 help - prints list of commands (as you can see)";
 	CLI_Transmit(help_msg5, (sizeof(help_msg5) / sizeof(uint8_t)));
-	uint8_t help_msg6[] = "	 quit - ends program";
+	uint8_t help_msg6[] = "\r\n	 quit - ends program";
 	CLI_Transmit(help_msg6, (sizeof(help_msg6) / sizeof(uint8_t)));
 }
 
@@ -162,12 +162,12 @@ void CLI_Query(void)
 	//print out a different message to the terminal
 	if(GPIO_ODR_checker == 1)
 	{
-		uint8_t query_on_msg[] = "> Onboard LED is currently ON";
+		uint8_t query_on_msg[] = "\r\n> Onboard LED is currently ON";
 		CLI_Transmit(query_on_msg, (sizeof(query_on_msg) / sizeof(uint8_t)));
 	}
 	else
 	{
-		uint8_t query_off_msg[] = "> Onboard LED is currently OFF";
+		uint8_t query_off_msg[] = "\r\n> Onboard LED is currently OFF";
 		CLI_Transmit(query_off_msg, (sizeof(query_off_msg) / sizeof(uint8_t)));
 	
 	}
@@ -196,14 +196,14 @@ void CLI_LEDON(void)
 	uint8_t top_cursor_ANSI[] = "	\x1b[1;1H";
 	CLI_Transmit(top_cursor_ANSI, (sizeof(top_cursor_ANSI) / sizeof(uint8_t)));
 	
-	uint8_t title_msg[] = "ENSE 452 Lab 4";
-	CLI_Transmit(title_msg, sizeof(title_msg));	
+	//uint8_t title_msg[] = "ENSE 452 Lab 4";
+	//CLI_Transmit(title_msg, sizeof(title_msg));	
 	
 	uint8_t status_msg[] = "LED STATUS: ON";
 	CLI_Transmit(status_msg, sizeof(status_msg));	
 	
 	//remake the scroll region from before
-	uint8_t scroll_ANSI[] = "\x1b[10;35r";
+	uint8_t scroll_ANSI[] = "\x1b[5;25r";
 	CLI_Transmit(scroll_ANSI, (sizeof(scroll_ANSI) / sizeof(uint8_t)));
 	
 	//put the cursor location back to where it was before
@@ -216,7 +216,7 @@ void CLI_LEDON(void)
 
 void CLI_LEDOFF(void)
 {
-	uint8_t off_msg[] = "> Turning LED OFF";
+	uint8_t off_msg[] = "\r\n> Turning LED OFF";
 	CLI_Transmit(off_msg, (sizeof(off_msg) / sizeof(uint8_t)));
 	//turn the LED off, also like the startup checker function
 	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
@@ -302,7 +302,7 @@ void CLI_Input(uint8_t *pData, uint16_t Size)
 	//then print out an error message for the user to see
 	else
 	{
-		uint8_t error_msg[] = "> Error - Not a registered command";
+		uint8_t error_msg[] = "\r\n> Error - Not a registered command";
 		CLI_Transmit(error_msg, (sizeof(error_msg) / sizeof(uint8_t)));
 	}
 	
@@ -321,7 +321,7 @@ uint8_t CLI_Quit(uint8_t *pData, uint16_t Size)
 	{
 		//if it does match, print a message to show it
 		//and return 0 so the loop gets exited
-		uint8_t quit_msg[] = "> Ending the program";
+		uint8_t quit_msg[] = "\r\n> Ending the program";
 		CLI_Transmit(quit_msg, (sizeof(quit_msg) / sizeof(uint8_t)));
 		return 0;
 	}
