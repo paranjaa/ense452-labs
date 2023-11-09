@@ -1,5 +1,5 @@
 
-//Starting again with the sample code, since I couldn't remake it
+//Starting again with the sample code, since I couldn't remake it in my lab 5
 
 
 
@@ -25,13 +25,19 @@ int main(void)
 	USART2->CR1 |= USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
 	USART2->CR2 |= USART_CR2_CLKEN;
 	
+	
+	//from TESTRTOS code, makes the LED blink at a certain rate
 	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 	
-	
-	return 0;
+	//Just keep looking after that
+	while(1)
+	{
+		
+	}
+	//return 0;
 }
 
 
