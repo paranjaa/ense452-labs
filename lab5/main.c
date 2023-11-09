@@ -1,42 +1,55 @@
-//ENSE 452
-//Alok Paranjape
-//November 9th
-//Lab 5: FreeRTOS
-//But at the moment, just checking the github is working again and blinking the LED without FreeRTOS
 
-#include "stm32f10x.h"
+//Starting again with the sample code, since I couldn't remake it
+
+
+
+#include <stdio.h>
+//#include "stm32F103RB.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-void delay()
+#define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
+
+static void vBlinkTask( void * parameters);
+
+int main(void)
 {
+	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
+	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
+	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
+	GPIOA->CRL |=  (1u<<20) |  (1u<<21) | (3<<8) | (2<<10);
+	//GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(4<11);
 	
-	unsigned volatile int c, d;
-   
-   for (c = 1; c <= 3000; c++)
-       for (d = 1; d <= 3000; d++)
-       {}
+	//AFIO->MAPR |= AFIO_MAPR_USART2_REMAP;
+	USART2->BRR = (8<<0) | (19<<4);  //hopefully baud 115200
+	USART2->CR1 |= USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
+	USART2->CR2 |= USART_CR2_CLKEN;
+	
+	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
+	
+	/* Start the scheduler. */
+	vTaskStartScheduler();
+	
+	
+	return 0;
 }
 
-int main() {
-		//RCC->APB2ENR |= 
-		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 
-
-		//prep onboard light, in PA5?
-		GPIOA->CRL |=  GPIO_CRL_MODE5_0 |  GPIO_CRL_MODE5_1;
-		GPIOA->CRL &= ~GPIO_CRL_CNF5_0 &~ GPIO_CRL_CNF5_1;
+static void vBlinkTask( void * parameters)
+{
+	for (;;)
+	{
+	
+		GPIOA->ODR |= (1u<<5);	
+		USART2->DR = 0x60;
+		vTaskDelay(1000);
 		
-	
-		//just infinitely blink that LED
-		while(1)
-		{
-			GPIOA->ODR |= GPIO_ODR_ODR5; //turn on the onboard light
-			delay();
-			GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5; //turn off the onboard light 
-			delay();
-		}
+		GPIOA->ODR &= ~(1u<<5);
+		
+		vTaskDelay(1500);
+		
+		
+	}
 	
 	
-    //return 0;
 }
