@@ -13,6 +13,13 @@ Added in a bit for timing, but wasn't sure how to test it, especially with how l
 #include "usart.h"
 #include "stm32f10x.h"
 
+//added code here to interact with FreeRTOS and its queue
+#include "FreeRTOS.h"
+#include "queue.h"
+
+
+extern QueueHandle_t CLI_Queue;
+
 volatile uint8_t recieved_char;
 volatile uint8_t new_recieved;
 
@@ -26,14 +33,18 @@ void USART2_IRQHandler(void)
 	
 	//read the recieved data from the flag
 	//should probably add a check for the RXNE bit
-	recieved_char = USART2 ->DR;
-	
-
+	//recieved_char = USART2 ->DR;
 	
 	//then set the flag to show it got a new character
-	new_recieved = 1;
+	//new_recieved = 1;
 	
 	//also clearing the flag, suprised it was working without doing this
+	//USART2->SR &= ~USART_SR_RXNE;
+	
+	//starting again since we want to use the queue and not a global variable
+	uint8_t recieved_char = USART2->DR;
+	xQueueSendToFrontFromISR(CLI_Queue, &recieved_char, NULL);
+	new_recieved = 1;
 	USART2->SR &= ~USART_SR_RXNE;
 
 }

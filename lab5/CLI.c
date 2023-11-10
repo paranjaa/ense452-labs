@@ -14,6 +14,11 @@ opted to put them in the string instead, with a \r \n in each message now
 #include "stm32f10x.h"
 #include "usart.h"
 #include "CLI.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+
+//QueueHandle_t CLI_Queue;
+//QueueHandle_t Freq_Queue;
 
 
 extern uint8_t recieved_char;
@@ -37,6 +42,14 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 }
 
+
+//making a new function for dealing with the LED
+
+/*
+void CLI_RTOS(uint8_t *pData, uint16_t Size)
+{
+	
+}*/
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
