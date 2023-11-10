@@ -37,7 +37,10 @@ int main(void)
 	USART2->CR2 |= USART_CR2_CLKEN;
 	
 	
-	sendbyte('a');
+	//sendbyte('a');
+	
+	uint8_t title_msg[] = "ENSE 452 Lab 4 CLI";
+	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
 	//from TESTRTOS code, makes the LED blink at a certain rate
 	//xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);

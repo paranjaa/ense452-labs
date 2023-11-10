@@ -323,7 +323,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -398,6 +398,16 @@
               <FileName>usart.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\usart.h</FilePath>
+            </File>
+            <File>
+              <FileName>CLI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CLI.c</FilePath>
+            </File>
+            <File>
+              <FileName>CLI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\CLI.h</FilePath>
             </File>
           </Files>
         </Group>
