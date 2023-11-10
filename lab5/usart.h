@@ -1,11 +1,9 @@
 /*
-ENSE 452
+ENSE 452 Lab 5
 Alok Paranjape
 200246370
-October 8th
-usart.h has the function signatures and comments for phase 1
-just the basic sending and getting bytes, plus the startup functions 
-and the others for testing
+November 9th
+No changes from lab 4
 */
 
 #include <stdint.h>

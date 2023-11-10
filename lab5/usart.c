@@ -2,11 +2,8 @@
 ENSE 452
 Alok Paranjape
 200246370
-October 22nd
-usart.c has the function definitions for phase 1
-the basic sending and getting byte functions
-plus a startup and delay function I used for debugging
-Added in a bit for timing, but wasn't sure how to test it, especially with how late things got
+November 9th
+Changed the IRQ handler to get store it in the xCLI_Queue instead
 */
 
 
@@ -18,7 +15,8 @@ Added in a bit for timing, but wasn't sure how to test it, especially with how l
 #include "queue.h"
 
 
-extern QueueHandle_t CLI_Queue;
+extern QueueHandle_t xCLI_Queue;
+extern QueueHandle_t xFreq_Queue;
 
 volatile uint8_t recieved_char;
 volatile uint8_t new_recieved;
@@ -40,12 +38,14 @@ void USART2_IRQHandler(void)
 	
 	//also clearing the flag, suprised it was working without doing this
 	//USART2->SR &= ~USART_SR_RXNE;
-	
-	//starting again since we want to use the queue and not a global variable
-	uint8_t recieved_char = USART2->DR;
-	xQueueSendToFrontFromISR(CLI_Queue, &recieved_char, NULL);
-	new_recieved = 1;
+
+	//changed this since we want to use the RTOS queue and not a global variable
+
+	uint8_t characterReceived;
+	characterReceived = USART2->DR;
+	xQueueSendToFrontFromISR(xCLI_Queue, &characterReceived, NULL); 
 	USART2->SR &= ~USART_SR_RXNE;
+   
 
 }
 
@@ -74,6 +74,8 @@ void delay2(void)
 /** Configure and enable the device. */
 void serial_open(void)
 {
+
+	
 	//Ensure the the Port A clock is enabled.
 	RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN; 
   //Ensure the USART 2 clock is enabled. (It's in APB1)
@@ -145,7 +147,7 @@ void serial_open(void)
 	//enabling timer 2 interrupt
 	NVIC_EnableIRQ(TIM2_IRQn);
 	
-
+	
 }
 
 //just reverses every bit that was set, flipped all the 1 sets (with |) to 0s (with &)

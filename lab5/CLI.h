@@ -1,9 +1,9 @@
 /*
-ENSE 452 Lab 4
+ENSE 452 Lab 5
 Alok Paranjape
 200246370
-October 29th
-No changes from previous lab, other than updating this header file
+November 9th
+Added in a signature for CLI_RTOS
 */
 
 #include "stm32f10x.h"
@@ -97,3 +97,16 @@ So it can get reused later on and there aren't leftovers from the previous loop
 @pre must have already called serial_open()
 */
 void CLI_Clean(uint8_t *pData, uint16_t Size);
+
+
+/**
+Simplified version of CLI_Receive and CLI_INPUT
+takes a single character and tries (with mixed results) to return it as a capital and put a frequency in the query
+@param *pData, points to an array for where the user's input has been stored (but it's just one)
+@param Size, the size of that array,
+@pre must have already called serial_open()
+*/
+void CLI_RTOS(uint8_t *pData, uint16_t Size);
+
+
+

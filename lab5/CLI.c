@@ -1,14 +1,10 @@
 /*
-ENSE 452 Lab 4
+ENSE 452 Lab 5
 Alok Paranjape
 200246370
-October 29th
-Added ANSI code to CLI_LEDON and CLI_LEDOFF
-Makes them update the status above the scrollable part then move back to it
-
-Also changed CLI_Transmit to automatically put multiple new lines, 
-it was getting in the way with moving the cursor at the same time as the ANSI did
-opted to put them in the string instead, with a \r \n in each message now
+November 9th
+Mostly the same code as lab 4
+Added a function for RTOS, couldn't get the rest of it to work
 */
 
 #include "stm32f10x.h"
@@ -17,8 +13,11 @@ opted to put them in the string instead, with a \r \n in each message now
 #include "FreeRTOS.h"
 #include "queue.h"
 
+#include <string.h>
+
 //QueueHandle_t CLI_Queue;
-//QueueHandle_t Freq_Queue;
+extern QueueHandle_t xFreq_Queue;
+
 
 
 extern uint8_t recieved_char;
@@ -45,11 +44,59 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 //making a new function for dealing with the LED
 
-/*
-void CLI_RTOS(uint8_t *pData, uint16_t Size)
+
+//Receive data via USART
+void CLI_RTOS(uint8_t *input, uint16_t size) 
 {
+	int frequency;
+	if(input[0] == 'a')
+	{
+		//if it gets a, then send a capital A to confirm it got here
+		sendbyte('A');
+		//then set the frequency to 250 and put it in the queue
+		frequency = 250;
+		xQueueSendToFront(xFreq_Queue, &frequency, NULL);
+		return;
+	}
 	
-}*/
+	
+	else if(input[0] == 'b')
+	{
+		//if it's B, print B to make sure it got here, then set the frequency to 1000
+		sendbyte('B');
+		//it doesn't actually set it to 1000, it's something else
+		frequency = 1000;
+		xQueueSendToFront(xFreq_Queue, &frequency, NULL);
+		return;
+	}
+	else if(input[0] == 'c')
+	{
+		//same deal with c
+		sendbyte('C');
+		frequency = 3000;
+		xQueueSendToFront(xFreq_Queue, &frequency, NULL);
+		return;
+	}
+	else
+	{
+		//if it's anything other than a b or c, then 
+		sendbyte('!');
+		//set the frequency to 100
+		frequency = 100;
+		//and put it on the queue, for some reason this one does work
+		//not sure why though
+		xQueueSendToFront(xFreq_Queue, &frequency, NULL);
+		return;
+	}
+	
+
+
+
+	
+
+	
+
+} 
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
