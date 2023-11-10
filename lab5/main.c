@@ -7,6 +7,8 @@
 //#include "stm32F103RB.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "usart.h"
+#include "CLI.h"
 
 #define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
 
@@ -14,6 +16,15 @@ static void vBlinkTask( void * parameters);
 
 int main(void)
 {
+	
+	//calling the setup function
+	serial_open();
+	
+	//for seeing if it's actually running, should pulse the LED for a second
+	startupCheck();
+	
+	
+	
 	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
 	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
 	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
@@ -26,11 +37,13 @@ int main(void)
 	USART2->CR2 |= USART_CR2_CLKEN;
 	
 	
+	sendbyte('a');
+	
 	//from TESTRTOS code, makes the LED blink at a certain rate
-	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
+	//xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
 	/* Start the scheduler. */
-	vTaskStartScheduler();
+	//vTaskStartScheduler();
 	
 	//Just keep looking after that
 	while(1)
