@@ -48,6 +48,8 @@ void USART2_IRQHandler(void)
 
 }
 
+
+
 void startupCheck(void)
 {	
 	//show the program is running by toggling the onboard LED

@@ -40,7 +40,34 @@ int main(void)
 	
 	
 	//Onboard Button -> PC/13
-	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN; 
+	
+	//need to setup interrupts on PC 13
+	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+	
+	
+	//Turn on the clocks for AFIO and PortC ( RCC-> APB2ENR)
+		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+		RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+	
+	//Select Port C pins as the source for EXTI 0 events (AFIO->EXTICR)
+	AFIO->EXTICR[3] |= 0x20;
+	
+	
+	//Unmask PC13 as the interrupt source (EXTI->IMR)
+	EXTI->IMR |= 0x1000;
+	
+	//select the falling edge of PB13 events as the trigger (EXTI->FTSR)
+	EXTI->FTSR |= 0x1000;
+	
+	
+	//Unmask EXTI0 as an interrupt source in the NVIC (NVIC->ISER[0])
+	NVIC_EnableIRQ (EXTI15_10_IRQn);
+	
+	GPIOA->ODR |= (1u<<5);
+	
+	
+
 	
 	
 	
