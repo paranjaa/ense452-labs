@@ -23,6 +23,8 @@ QueueHandle_t xFreq_Queue;
 
 QueueHandle_t xClip_Queue;
 
+
+
 int main(void)
 {
 	//serial_open();
@@ -38,7 +40,7 @@ int main(void)
 	USART2->CR2 |= USART_CR2_CLKEN;
 	
 	
-	
+	//startupCheck(); 
 	//Onboard Button -> PC/13
 	
 	//need to setup interrupts on PC 13
@@ -47,70 +49,50 @@ int main(void)
 	
 	
 	//Turn on the clocks for AFIO and PortC ( RCC-> APB2ENR)
-		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+
 	
 	//Select Port C pins as the source for EXTI 0 events (AFIO->EXTICR)
 	AFIO->EXTICR[3] |= 0x20;
 	
 	
 	//Unmask PC13 as the interrupt source (EXTI->IMR)
-	EXTI->IMR |= 0x1000;
+	EXTI->IMR |= 0x2000;
 	
-	//select the falling edge of PB13 events as the trigger (EXTI->FTSR)
-	EXTI->FTSR |= 0x1000;
+	//select the falling edge of PC13 events as the trigger (EXTI->FTSR)
+	EXTI->FTSR |= 0x2000;
 	
 	
-	//Unmask EXTI0 as an interrupt source in the NVIC (NVIC->ISER[0])
+	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
 	NVIC_EnableIRQ (EXTI15_10_IRQn);
 	
+	
+
+	
 	GPIOA->ODR |= (1u<<5);
-	
-	
 
 	
+	xFreq_Queue = xQueueCreate(1, sizeof(uint32_t));	
+	
+	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
+	
+	xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
 	
-	
-	
-	
-
-
-	/*
-	GPIOA->ODR |= GPIO_ODR_ODR5;
-
-	while( (GPIOC->IDR & GPIO_IDR_IDR13) != 0 ) 
-	{
-	
-	}
-
-	GPIOA->ODR &= (uint32_t) ~GPIO_ODR_ODR5;
-	*/
-
+	//for some reason, it doesn't like to print N? wait, maybe it's just that index?
+	uint8_t title_msg[] = "ENSE 452 Lab Project \r\n";
+	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
+		
 
 	
+	/* Start the scheduler. */
+	vTaskStartScheduler();
 	
 	while(1)
 	{
 	
 	}
-	
-	
-	//xFreq_Queue = xQueueCreate(1, sizeof(uint32_t));	
-	
-	//xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
-	
-	//xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
-	
-	
-	//for some reason, it doesn't like to print N? wait, maybe it's just that index?
-	//uint8_t title_msg[] = "ENSE 452 Lab Project \r\n";
-	//CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
-		
-
-	
-	/* Start the scheduler. */
-	//vTaskStartScheduler();
 	
 	
 	return 0;
@@ -136,6 +118,7 @@ static void vBlinkTask( void * parameters)
 	
 }
 
+
 static void vPaperClipDisplayTask( void * parameters)
 {
 	int paperclips = 0;
@@ -147,14 +130,6 @@ static void vPaperClipDisplayTask( void * parameters)
 		paperclips++;
 		sprintf(clipCharArray, "%d", paperclips);
 		
-		/*
-		for(unsigned int i = 0; i < clipCharSize; i++)
-		{
-			if(clipCharArray[i] == '¥')
-			{
-				
-			}
-		}*/
 		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\r');
 		sendbyte('\n');
@@ -167,3 +142,4 @@ static void vPaperClipDisplayTask( void * parameters)
 	
 	
 }
+

@@ -50,6 +50,17 @@ void USART2_IRQHandler(void)
 
 
 
+
+void EXTI15_10_IRQHandler(void)
+{
+	//clear the bit?
+	EXTI->PR |= EXTI_PR_PR13;
+	GPIOA->ODR |= GPIO_ODR_ODR5;
+	//delay2();
+	
+
+	
+}
 void startupCheck(void)
 {	
 	//show the program is running by toggling the onboard LED
