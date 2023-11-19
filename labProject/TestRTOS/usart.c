@@ -21,7 +21,7 @@ extern QueueHandle_t xFreq_Queue;
 volatile uint8_t recieved_char;
 volatile uint8_t new_recieved;
 
-
+extern QueueHandle_t xClip_Queue;
 
 
 void USART2_IRQHandler(void)
@@ -51,12 +51,19 @@ void USART2_IRQHandler(void)
 
 
 
+
+
 void EXTI15_10_IRQHandler(void)
 {
 	//clear the bit?
 	EXTI->PR |= EXTI_PR_PR13;
-	GPIOA->ODR |= GPIO_ODR_ODR5;
-	//delay2();
+	//GPIOA->ODR ^= GPIO_ODR_ODR5;
+	 //delay2();
+	int newClips = 1;
+	
+	xQueueSendToFrontFromISR( xClip_Queue, &newClips, NULL);
+	
+	
 	
 
 	
