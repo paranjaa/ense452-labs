@@ -42,8 +42,9 @@ int main(void)
 	
 	
 	//startupCheck(); 
-	//Onboard Button -> PC/13
 	
+	
+	//Onboard Button -> PC/13
 	//need to setup interrupts on PC 13
 	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
@@ -92,6 +93,27 @@ int main(void)
 	uint8_t title_msg[] = "ENSE 452 Lab Project \n\r";
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
+	//skip printing for the working parts
+	sendbyte('\n');
+	sendbyte('\n');
+	
+	
+	//later UI stuff
+	uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
+	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
+
+	
+	//these are currently static, they're just the rates in the sell task
+	uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
+	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
+	
+	uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
+	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
+	
+	
+	
+	
+	
 	
 
 
@@ -129,6 +151,9 @@ static void vBlinkTask( void * parameters)
 }
 
 
+
+
+
 static void vPaperClipDisplayTask( void * parameters)
 {
 	uint8_t paperclips = 0;
@@ -140,13 +165,11 @@ static void vPaperClipDisplayTask( void * parameters)
 	uint8_t clipCharArray[clipCharSize]; 
 	for (;;)
 	{
-		//paperclips = 0;
-		
+				
 		uint8_t top_ANSI[] = "\x1b[2;0H";
 		CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 		
-		//BaseType_t status = xQueueReceive(xClip_Queue, &paperclips, 100); 	
-		
+		//when it gets updates about 
 		if( uxQueueMessagesWaiting( xClip_Queue ) != 0 )		
 		{			
 
@@ -159,11 +182,11 @@ static void vPaperClipDisplayTask( void * parameters)
 		
 
 		
-		
+		//should probably split updating for sold clips off into a different task
 		if( uxQueueMessagesWaiting( xSell_Queue ) != 0 )		
 		{			
 
-			//replace the clips value with it
+			//replace the clips clips value with it
 			xQueueReceive(xSell_Queue, &sellClips, NULL);
 			
 			if( (paperclips - sellClips) > 0 )
@@ -179,6 +202,16 @@ static void vPaperClipDisplayTask( void * parameters)
 		CLI_Transmit(clip_msg, (sizeof(clip_msg) / sizeof(uint8_t)));
 		
 		sprintf(clipCharArray, "%d", paperclips);
+		for(uint8_t i = 0; i < clipCharSize; i++)
+		{
+			if( (clipCharArray[i] < '0') || (clipCharArray[i] > '9'))
+			{
+				clipCharArray[i] = ' ';
+			
+			}
+		
+		}
+		
 		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
@@ -188,14 +221,14 @@ static void vPaperClipDisplayTask( void * parameters)
 		
 			
 		sprintf(clipCharArray, "%d", money);
+		
 		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
-		sendbyte('$');
 		sendbyte('\n');
 		sendbyte('\r');
 	
 
 			
-		vTaskDelay(500);
+		vTaskDelay(100);
 		}
 }
 
@@ -205,8 +238,9 @@ static void vPaperClipDisplayTask( void * parameters)
 
 static void vPaperClipSellTask( void * parameters)
 {
+	//these need to be changeable to reflect increasing demand
 	int sellRate = 0;
-	int sellFactor = 5;
+	int sellFactor = 4;
 	
 	for (;;)
 	{

@@ -53,14 +53,16 @@ void USART2_IRQHandler(void)
 
 
 
+
+
 void EXTI15_10_IRQHandler(void)
 {
-	//clear the bit?
+	//clear the interrupt bit?
 	EXTI->PR |= EXTI_PR_PR13;
-	//GPIOA->ODR ^= GPIO_ODR_ODR5;
-	 //delay2();
+
+	//say that there's one new clip that's been made
 	int newClips = 1;
-	
+	//and put in the list of new clips
 	xQueueSendToFrontFromISR( xClip_Queue, &newClips, NULL);
 	
 	
@@ -68,6 +70,7 @@ void EXTI15_10_IRQHandler(void)
 
 	
 }
+
 void startupCheck(void)
 {	
 	//show the program is running by toggling the onboard LED
