@@ -22,31 +22,22 @@ volatile uint8_t recieved_char;
 volatile uint8_t new_recieved;
 
 extern QueueHandle_t xClip_Queue;
+extern QueueHandle_t xCLI_Queue;
 
-/*
 void USART2_IRQHandler(void)
 {
 	
 	
-	
-	//read the recieved data from the flag
-	//should probably add a check for the RXNE bit
-	//recieved_char = USART2 ->DR;
-	
-	//then set the flag to show it got a new character
-	//new_recieved = 1;
-	
-	//also clearing the flag, suprised it was working without doing this
-	//USART2->SR &= ~USART_SR_RXNE;
 
 	//changed this since we want to use the RTOS queue and not a global variable
-
+	
 	uint8_t characterReceived;
 	characterReceived = USART2->DR;
 	xQueueSendToFrontFromISR(xCLI_Queue, &characterReceived, NULL); 
 	USART2->SR &= ~USART_SR_RXNE;
+	//sendbyte('a');
 
-}*/
+}
 
 
 

@@ -29,9 +29,20 @@ static void vCLI_Task(void * parameters);
 QueueHandle_t xClip_Queue;
 QueueHandle_t xSell_Queue;
 
+QueueHandle_t xCLI_Queue;
+
+
+
 int main(void)
 {
-	//serial_open();
+	
+		
+
+	
+	
+	serial_open();
+	
+	/*
 	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
 	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
 	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
@@ -70,6 +81,35 @@ int main(void)
 	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
 	NVIC_EnableIRQ (EXTI15_10_IRQn);
 	
+			GPIOA->CRL &= ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
+		GPIOA->CRL |= (GPIO_CRL_CNF2_1 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3_1);
+	
+	//set the UsartEnable bit for USART2, before setting TE and RE
+	USART2->CR1 |= USART_CR1_UE;
+  //Enable the USART TransmitEnable and RecieveEnable bits
+	USART2->CR1 |= USART_CR1_TE;
+	USART2->CR1 |= USART_CR1_RE;
+	//set the UsartEnable bit again for USART2, after TE and RE
+	//(not actually sure why, I just remember Dave mentioning it and noting it down)
+	USART1->CR1 |= USART_CR1_UE;
+
+	//clear the 12th bit in CR1 so it's set to "Start bit, 8 Data bits, n Stop bit"
+	USART2 -> CR1 &= ~0x1000; 
+	
+	//set the USART Interrupt Enable, so it generates an interrupt when a character is recieved
+	USART2->CR1 |= USART_CR1_RXNEIE;
+	
+	
+	
+	//Set the baud rate to to 115200
+	//calculated out this first value for it, 19.5 with Mantissa: 1011 and Frac: 0.5
+	//USART2->BRR = 0x138;
+	//But it was probably wrong,
+	//and also Trevor showed me a much less confusing way to set those bits
+	USART2 -> BRR = (8 << 0) | (19 << 4);
+	//Unmask USART2 as an interrupt source in the NVIC
+	NVIC_EnableIRQ(USART2_IRQn);
+	*/
 	
 
 	//startupCheck();
@@ -84,12 +124,19 @@ int main(void)
 	
 	//xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	xTaskCreate(vCLI_Task,"CLI",configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
+	xTaskCreate(vCLI_Task, "CLI",configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
 	
 	
 	//xClip_Queue = xQueueCreate(16, sizeof(uint8_t));	
 	
 	//xSell_Queue = xQueueCreate(16, sizeof(uint8_t));	
+	
+	xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
+	
+	//
+	
+	//uint8_t ANSI_clear[] = "\x1b[2J";
+	//CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 	
 	
 	//print out a title message
@@ -97,21 +144,21 @@ int main(void)
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
 	//skip printing for the working parts
-	sendbyte('\n');
-	sendbyte('\n');
+	//sendbyte('\n');
+	//sendbyte('\n');
 	
 	
 	//later UI stuff
-	uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
-	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
+	//uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
+	//CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
 
 	
 	//these are currently static, they're just the rates in the sell task
-	uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
-	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
+	//uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
+	//CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
 	
-	uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
-	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
+	//uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
+	//CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
 	
 	
 	
@@ -266,12 +313,30 @@ static void vPaperClipSellTask( void * parameters)
 
 		
 
+
+
+
 static void vCLI_Task(void * parameters)
 {
-	uint8_t cli_msg_test[] = "setup the CLI task \n\r";
-	CLI_Transmit(cli_msg_test, (sizeof(cli_msg_test) / sizeof(uint8_t)));
+	//uint8_t cli_msg_test[] = "setup the CLI task \n\r";
+	//CLI_Transmit(cli_msg_test, (sizeof(cli_msg_test) / sizeof(uint8_t)));
+	
+	uint8_t newChar;
+	for (;;)
+	{
+		if( uxQueueMessagesWaiting( xCLI_Queue ) != 0 )		
+		{			
+			//replace the new clips value with it
+			xQueueReceive(xCLI_Queue, &newChar, NULL);
+			sendbyte(newChar);
+		}
+		
+		
+	}
 	
 }
+
+
 //position the cursor so it's at the start of the screen (at the top left)
 	//uint8_t top_ANSI[] = "\x1b[0;0H";
 	//CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
