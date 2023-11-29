@@ -13,6 +13,7 @@
 #define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
 #define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
+#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
 
 static void vBlinkTask( void * parameters);
 
@@ -20,8 +21,10 @@ static void vPaperClipDisplayTask(void * parameters);
 
 static void vPaperClipSellTask(void * parameters);
 
-QueueHandle_t xFreq_Queue;
-QueueHandle_t xCLI_Queue;
+static void vCLI_Task(void * parameters);
+
+
+
 
 QueueHandle_t xClip_Queue;
 QueueHandle_t xSell_Queue;
@@ -40,9 +43,7 @@ int main(void)
 	USART2->CR1 |= USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
 	USART2->CR2 |= USART_CR2_CLKEN;
 	
-	
-	//startupCheck(); 
-	
+	//GPIOA->ODR |= (1u<<5);
 	
 	//Onboard Button -> PC/13
 	//need to setup interrupts on PC 13
@@ -71,22 +72,24 @@ int main(void)
 	
 	
 
-	
-	GPIOA->ODR |= (1u<<5);
+	//startupCheck();
+
 
 	
-	xClip_Queue = xQueueCreate(1, sizeof(uint32_t));	
-	
-	xSell_Queue = xQueueCreate(1, sizeof(uint32_t));	
+
 	
 	//xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
-	xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	//xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	//xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	
+	xTaskCreate(vCLI_Task,"CLI",configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
 	
 	
-
+	//xClip_Queue = xQueueCreate(16, sizeof(uint8_t));	
+	
+	//xSell_Queue = xQueueCreate(16, sizeof(uint8_t));	
 	
 	
 	//print out a title message
@@ -189,7 +192,7 @@ static void vPaperClipDisplayTask( void * parameters)
 			//replace the clips clips value with it
 			xQueueReceive(xSell_Queue, &sellClips, NULL);
 			
-			if( (paperclips - sellClips) > 0 )
+			if( (paperclips - sellClips) >= 0 )
 			{
 				paperclips = paperclips - sellClips;
 				sellClips = 0;
@@ -261,7 +264,15 @@ static void vPaperClipSellTask( void * parameters)
 }
 
 
-		//position the cursor so it's at the start of the screen (at the top left)
+		
+
+static void vCLI_Task(void * parameters)
+{
+	uint8_t cli_msg_test[] = "setup the CLI task \n\r";
+	CLI_Transmit(cli_msg_test, (sizeof(cli_msg_test) / sizeof(uint8_t)));
+	
+}
+//position the cursor so it's at the start of the screen (at the top left)
 	//uint8_t top_ANSI[] = "\x1b[0;0H";
 	//CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	//also print a status for the number of paperclips

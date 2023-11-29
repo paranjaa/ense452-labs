@@ -16,7 +16,7 @@ Added a function for RTOS, couldn't get the rest of it to work
 #include <string.h>
 
 //QueueHandle_t CLI_Queue;
-extern QueueHandle_t xFreq_Queue;
+//extern QueueHandle_t xFreq_Queue;
 
 
 
@@ -26,18 +26,11 @@ extern uint8_t new_recieved;
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
-	//prints out a new line and return first
-	//so it doesn't cover/blend with previous print
-	//sendbyte('\r');
-	//sendbyte('\n');
-	//then just loops through the array and prints everything
+
 	for(uint16_t i = 0; i < Size; i++)
 	{
 		sendbyte( *(pData + i) );
 	}
-	//another line after for more separation
-	//sendbyte('\r');
-	//sendbyte('\n');
 
 }
 
@@ -46,6 +39,7 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 
 //Receive data via USART
+/*
 void CLI_RTOS(uint8_t *input, uint16_t size) 
 {
 	int frequency;
@@ -97,7 +91,12 @@ void CLI_RTOS(uint8_t *input, uint16_t size)
 	
 
 } 
+*/
 
+
+
+
+/*
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
 	//reads in an initial input from the port before actually going
@@ -404,4 +403,4 @@ void CLI_Clean(uint8_t *pData, uint16_t Size)
 		*(pData + i) = ' ';
 	}
 
-}
+}*/

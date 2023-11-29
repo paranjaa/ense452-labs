@@ -15,15 +15,15 @@ Changed the IRQ handler to get store it in the xCLI_Queue instead
 #include "queue.h"
 
 
-extern QueueHandle_t xCLI_Queue;
-extern QueueHandle_t xFreq_Queue;
+//extern QueueHandle_t xCLI_Queue;
+//extern QueueHandle_t xFreq_Queue;
 
 volatile uint8_t recieved_char;
 volatile uint8_t new_recieved;
 
 extern QueueHandle_t xClip_Queue;
 
-
+/*
 void USART2_IRQHandler(void)
 {
 	
@@ -46,8 +46,7 @@ void USART2_IRQHandler(void)
 	xQueueSendToFrontFromISR(xCLI_Queue, &characterReceived, NULL); 
 	USART2->SR &= ~USART_SR_RXNE;
 
-}
-
+}*/
 
 
 
