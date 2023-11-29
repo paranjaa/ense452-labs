@@ -140,7 +140,7 @@ int main(void)
 	
 	
 	//print out a title message
-	uint8_t title_msg[] = "ENSE 452 Lab Project \n\r";
+	uint8_t title_msg[] = "E NSE 452 Lab Project\n\r";
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
 	//skip printing for the working parts
@@ -318,18 +318,24 @@ static void vPaperClipSellTask( void * parameters)
 
 static void vCLI_Task(void * parameters)
 {
-	//uint8_t cli_msg_test[] = "setup the CLI task \n\r";
-	//CLI_Transmit(cli_msg_test, (sizeof(cli_msg_test) / sizeof(uint8_t)));
+	
 	
 	uint8_t newChar;
+	
+	
 	for (;;)
 	{
 		if( uxQueueMessagesWaiting( xCLI_Queue ) != 0 )		
 		{			
 			//replace the new clips value with it
 			xQueueReceive(xCLI_Queue, &newChar, NULL);
-			sendbyte(newChar);
+			
+			//then do the reception on it
+			//sendbyte(newChar);
+			CLI_Receive(&newChar, 1);
 		}
+
+		
 		
 		
 	}

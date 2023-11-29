@@ -24,6 +24,10 @@ extern uint8_t recieved_char;
 extern uint8_t new_recieved;
 
 
+//make an array for storing the characters the user sends 
+//should be enough
+static uint8_t inputArray[10] = ""; 
+
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
 
@@ -32,6 +36,52 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 		sendbyte( *(pData + i) );
 	}
 
+}
+
+void CLI_Receive(uint8_t *pData, uint16_t Size)
+{
+	//get the current size of the string
+	int currentSize = (sizeof(inputArray) / sizeof(uint8_t));
+	uint8_t newChar = *pData;
+	
+	sendbyte(newChar);
+	
+	
+	//if they send either a backspace or a delete
+	if(newChar == 8 || newChar == 127)
+	{
+		sendbyte('D');
+	}
+	//if they send an enter (here it's a carriage return)
+	if(newChar == 13)
+	{
+		sendbyte('E');
+	}
+	//if they didn't send enter or a backspace
+	//check if there's still room in the string
+	else if(currentSize < sizeof(inputArray) - 1)
+	{
+		sendbyte(newChar);
+		//put the new character after the end of the current array
+		inputArray[(currentSize + 1)] = newChar;
+		
+		//get a new size for the increased array
+		int newSize = (sizeof(inputArray) / sizeof(uint8_t));
+		
+		//with that size, put a new null terminator at the end
+		inputArray[newSize] = '\0';
+		
+		
+		
+	}
+		
+	
+	
+
+	
+	//sendbyte(newChar);
+	
+	
 }
 
 
