@@ -31,6 +31,48 @@ QueueHandle_t xSell_Queue;
 
 QueueHandle_t xCLI_Queue;
 
+static uint8_t inputArray2[5];
+
+
+void CLI_Receive2(uint8_t *pData, uint16_t Size)
+{
+	uint8_t newChar = *pData;
+	//get the current index of the array
+	uint8_t currentIndex = (sizeof(inputArray2) / sizeof(uint8_t));
+	sendbyte(newChar);
+	//check if it's an enter
+	if(newChar == '\r')
+	{
+		sendbyte('\n');
+		//print the rest of the array (to make sure it's all in there?
+		CLI_Transmit(inputArray2, (sizeof(inputArray2) / sizeof(uint8_t)));
+		return;
+	}
+	//if it's a backspace (or a delete) (and the index isn't empty)
+	if(newChar == 8 && currentIndex > 0)
+	{
+		currentIndex--;
+		//put a null terminator at the current spot in the array
+		inputArray2[currentIndex] = '\0';
+		return;
+		
+		//for(uint8_t i = (currentIndex + 1); i < (sizeof(inputArray) / sizeof(uint8_t); i++)
+		//{
+		//}
+
+	}
+	//if it's not a enter or a delete, if there's still room in the array
+	if(currentIndex < (sizeof(inputArray2) / sizeof(uint8_t)))
+	{
+		//then add it to the array and move the null forward
+		inputArray2[currentIndex] = newChar;
+		currentIndex++;
+		inputArray2[currentIndex] = '\0';
+		return;
+		
+	}
+
+} 
 
 
 int main(void)
@@ -332,7 +374,7 @@ static void vCLI_Task(void * parameters)
 			
 			//then do the reception on it
 			//sendbyte(newChar);
-			CLI_Receive(&newChar, 1);
+			CLI_Receive2(&newChar, 1);
 		}
 
 		

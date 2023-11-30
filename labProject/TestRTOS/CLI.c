@@ -25,8 +25,9 @@ extern uint8_t new_recieved;
 
 
 //make an array for storing the characters the user sends 
-//should be enough
-static uint8_t inputArray[10] = ""; 
+//5 should be enough
+//uint8_t inputSize = 5;
+static uint8_t inputArray[5] = ""; 
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
@@ -40,13 +41,52 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
-	//get the current size of the string
-	int currentSize = (sizeof(inputArray) / sizeof(uint8_t));
 	uint8_t newChar = *pData;
-	
 	sendbyte(newChar);
+	uint8_t currentIndex = (sizeof(inputArray) / sizeof(uint8_t));
+	
+	//check if it's an enter, 
+	if(newChar == '\r')
+	{
+		sendbyte('\n');
+		CLI_Transmit(inputArray, (sizeof(inputArray) / sizeof(uint8_t)));
+		return;
+	}
+	//if it's a backspace (or a delete) (and the index isn't empty)
+	if(newChar == 8 && currentIndex > 0)
+	{
+		currentIndex--;
+		//put a null terminator at the current spot in the array
+		inputArray[currentIndex] = '\0';
+		return;
+		
+		//for(uint8_t i = (currentIndex + 1); i < (sizeof(inputArray) / sizeof(uint8_t); i++)
+		//{
+		//}
+
+	}
+	//if it's not a enter or a delete, if there's still room in the array
+	if(currentIndex < (sizeof(inputArray) / sizeof(uint8_t)))
+	{
+		//then add it to the array and move the null forward
+		inputArray[currentIndex] = newChar;
+		currentIndex++;
+		inputArray[currentIndex] = '\0';
+		return;
+		
+	}
+	//if(currentSize < sizeof(inputArray))
+	//{
+		//put the new character in at the latest spot 
+	//	inputArray[currentSize] = newChar;
+	//	currentSize++;
+	//	inputArray[currentSize] = '\0';
+		//sendbyte(\r
+	//}
 	
 	
+	
+	/*
 	//if they send either a backspace or a delete
 	if(newChar == 8 || newChar == 127)
 	{
@@ -73,7 +113,7 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 		
 		
 		
-	}
+	}*/
 		
 	
 	
