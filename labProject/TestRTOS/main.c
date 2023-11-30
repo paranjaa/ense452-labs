@@ -11,19 +11,19 @@
 #include "task.h"
 
 #define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
-//#define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
-//#define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
+#define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
+#define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
 
 
-//#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
+#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
 
 static void vBlinkTask( void * parameters);
 
-//static void vPaperClipDisplayTask(void * parameters);
+static void vPaperClipDisplayTask(void * parameters);
 
-//static void vPaperClipSellTask(void * parameters);
+static void vPaperClipSellTask(void * parameters);
 
-// static void vCLI_Task(void * parameters);
+static void vCLI_Task(void * parameters);
 
 
 QueueHandle_t xClip_Queue;
@@ -37,8 +37,12 @@ QueueHandle_t xCLI_Queue;
 
 int main(void)
 {
+	/*
+	RCC->APB2ENR |= (1u<<2) | (1u<<4);
 	
-	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
+		//RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN;
+		//RCC->APB2ENR |=  RCC_APB2ENR_IOPCEN;
+	
 	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
 	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
 	GPIOA->CRL |=  (1u<<20) |  (1u<<21) | (3<<8) | (2<<10);
@@ -50,9 +54,13 @@ int main(void)
 	USART2->CR2 |= USART_CR2_CLKEN;	
 
 	
+	
+	
 	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
+	*/
+	
 	//serial_open();
-	/*
+	
 	
 	
 	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
@@ -117,7 +125,7 @@ int main(void)
 	
 	
 	//Unmask USART2 as an interrupt source in the NVIC
-	//NVIC_EnableIRQ(USART2_IRQn);
+	NVIC_EnableIRQ(USART2_IRQn);
 	
 	
 
@@ -126,28 +134,24 @@ int main(void)
 
 
 	
-	//
+	
 	
 	//xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	//xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	//xTaskCreate(vCLI_Task, "CLI", configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
-	
-	
-	xClip_Queue = xQueueCreate(16, sizeof(uint8_t));	
-	
-	xSell_Queue = xQueueCreate(16, sizeof(uint8_t));	
-	
+	xTaskCreate(vCLI_Task, "CLI", configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
 	
 		
-	//uint8_t a = 3;
+	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
-	//sendbyte(a);
+	//xClip_Queue = xQueueCreate(8, sizeof(uint8_t));	
 	
-	//xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
+	//xSell_Queue = xQueueCreate(8, sizeof(uint8_t));	
 	
-	//
+
+	xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
+
 	
 	//uint8_t ANSI_clear[] = "\x1b[2J";
 	//CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
@@ -158,8 +162,8 @@ int main(void)
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
 	//skip printing for the working parts
-	//sendbyte('\n');
-	//sendbyte('\n');
+	sendbyte('\n');
+	sendbyte('\n');
 	
 	
 	//later UI stuff
@@ -178,7 +182,7 @@ int main(void)
 	
 	
 	
-	*/
+	
 
 
 	
@@ -327,11 +331,11 @@ static void vPaperClipSellTask( void * parameters)
 
 		
 
+
+
+
+
 */
-
-
-
-/*
 static void vCLI_Task(void * parameters)
 {
 	
@@ -348,7 +352,7 @@ static void vCLI_Task(void * parameters)
 			
 			//then do the reception on it
 			//sendbyte(newChar);
-			CLI_Receive2(&newChar, 1);
+			CLI_Receive(&newChar, 1);
 		}
 
 		
@@ -357,7 +361,7 @@ static void vCLI_Task(void * parameters)
 	}
 	
 }
-*/
+
 
 
 

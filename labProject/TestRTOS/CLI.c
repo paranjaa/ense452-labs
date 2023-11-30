@@ -26,8 +26,8 @@ extern uint8_t new_recieved;
 
 //make an array for storing the characters the user sends 
 //5 should be enough
-//uint8_t inputSize = 5;
-static uint8_t inputArray[5] = ""; 
+const uint8_t INPUT_SIZE = 5;
+static uint8_t inputArray[INPUT_SIZE] = ""; 
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
