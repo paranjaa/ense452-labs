@@ -13,7 +13,7 @@
 #define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
 #define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
-#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
+//#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
 
 static void vBlinkTask( void * parameters);
 
@@ -21,9 +21,7 @@ static void vPaperClipDisplayTask(void * parameters);
 
 static void vPaperClipSellTask(void * parameters);
 
-static void vCLI_Task(void * parameters);
-
-
+// static void vCLI_Task(void * parameters);
 
 
 QueueHandle_t xClip_Queue;
@@ -31,48 +29,8 @@ QueueHandle_t xSell_Queue;
 
 QueueHandle_t xCLI_Queue;
 
-static uint8_t inputArray2[5];
 
 
-void CLI_Receive2(uint8_t *pData, uint16_t Size)
-{
-	uint8_t newChar = *pData;
-	//get the current index of the array
-	uint8_t currentIndex = (sizeof(inputArray2) / sizeof(uint8_t));
-	sendbyte(newChar);
-	//check if it's an enter
-	if(newChar == '\r')
-	{
-		sendbyte('\n');
-		//print the rest of the array (to make sure it's all in there?
-		CLI_Transmit(inputArray2, (sizeof(inputArray2) / sizeof(uint8_t)));
-		return;
-	}
-	//if it's a backspace (or a delete) (and the index isn't empty)
-	if(newChar == 8 && currentIndex > 0)
-	{
-		currentIndex--;
-		//put a null terminator at the current spot in the array
-		inputArray2[currentIndex] = '\0';
-		return;
-		
-		//for(uint8_t i = (currentIndex + 1); i < (sizeof(inputArray) / sizeof(uint8_t); i++)
-		//{
-		//}
-
-	}
-	//if it's not a enter or a delete, if there's still room in the array
-	if(currentIndex < (sizeof(inputArray2) / sizeof(uint8_t)))
-	{
-		//then add it to the array and move the null forward
-		inputArray2[currentIndex] = newChar;
-		currentIndex++;
-		inputArray2[currentIndex] = '\0';
-		return;
-		
-	}
-
-} 
 
 
 int main(void)
@@ -82,9 +40,9 @@ int main(void)
 
 	
 	
-	serial_open();
+	//serial_open();
 	
-	/*
+	
 	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
 	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
 	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
@@ -102,7 +60,6 @@ int main(void)
 	//need to setup interrupts on PC 13
 	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
-	
 	
 	//Turn on the clocks for AFIO and PortC ( RCC-> APB2ENR)
 	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
@@ -123,8 +80,8 @@ int main(void)
 	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
 	NVIC_EnableIRQ (EXTI15_10_IRQn);
 	
-			GPIOA->CRL &= ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
-		GPIOA->CRL |= (GPIO_CRL_CNF2_1 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3_1);
+	GPIOA->CRL &= ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
+	GPIOA->CRL |= (GPIO_CRL_CNF2_1 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3_1);
 	
 	//set the UsartEnable bit for USART2, before setting TE and RE
 	USART2->CR1 |= USART_CR1_UE;
@@ -144,36 +101,39 @@ int main(void)
 	
 	
 	//Set the baud rate to to 115200
-	//calculated out this first value for it, 19.5 with Mantissa: 1011 and Frac: 0.5
-	//USART2->BRR = 0x138;
-	//But it was probably wrong,
-	//and also Trevor showed me a much less confusing way to set those bits
 	USART2 -> BRR = (8 << 0) | (19 << 4);
+	
+	
 	//Unmask USART2 as an interrupt source in the NVIC
-	NVIC_EnableIRQ(USART2_IRQn);
-	*/
+	//NVIC_EnableIRQ(USART2_IRQn);
+	
 	
 
 	//startupCheck();
 
 
-	
 
 	
 	//xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	
-	//xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	//xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
-	xTaskCreate(vCLI_Task, "CLI",configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
+	//xTaskCreate(vCLI_Task, "CLI", configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
 	
 	
-	//xClip_Queue = xQueueCreate(16, sizeof(uint8_t));	
+	xClip_Queue = xQueueCreate(16, sizeof(uint8_t));	
 	
-	//xSell_Queue = xQueueCreate(16, sizeof(uint8_t));	
+	xSell_Queue = xQueueCreate(16, sizeof(uint8_t));	
 	
-	xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
+	
+		
+	//uint8_t a = 3;
+	
+	//sendbyte(a);
+	
+	//xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
 	
 	//
 	
@@ -191,16 +151,16 @@ int main(void)
 	
 	
 	//later UI stuff
-	//uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
-	//CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
+	uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
+	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
 
 	
 	//these are currently static, they're just the rates in the sell task
-	//uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
-	//CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
+	uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
+	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
 	
-	//uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
-	//CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
+	uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
+	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
 	
 	
 	
@@ -358,6 +318,8 @@ static void vPaperClipSellTask( void * parameters)
 
 
 
+
+/*
 static void vCLI_Task(void * parameters)
 {
 	
@@ -383,6 +345,8 @@ static void vCLI_Task(void * parameters)
 	}
 	
 }
+*/
+
 
 
 //position the cursor so it's at the start of the screen (at the top left)
