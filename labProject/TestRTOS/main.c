@@ -1,7 +1,7 @@
 //ENSE 452 Lab Project
 // Built from TESTRTOS again
 
-#include <stdio.h>
+//#include <stdio.h>
 //#include "stm32F103RB.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -9,7 +9,9 @@
 #include "CLI.h"
 #include "queue.h"
 #include "task.h"
+#include "util.h"
 
+/*
 #define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
 #define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
@@ -32,11 +34,23 @@ QueueHandle_t xSell_Queue;
 QueueHandle_t xCLI_Queue;
 
 
-
+*/
 
 
 int main(void)
 {
+
+	
+	//startupCheck();
+	
+	
+	serial_init();
+	
+	//uint8_t title_msg[] = "\r ENSE 452 Lab Project\n\r";
+	//CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
+	
+	//startupCheck();
+	
 	/*
 	RCC->APB2ENR |= (1u<<2) | (1u<<4);
 	
@@ -59,6 +73,7 @@ int main(void)
 	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
 	*/
 	
+	/*
 	//serial_open();
 	
 	
@@ -184,10 +199,13 @@ int main(void)
 	
 	
 
-
+	*/
 	
-	/* Start the scheduler. */
-	vTaskStartScheduler();
+	 /*Start the scheduler. */
+	//vTaskStartScheduler();
+	
+	
+	
 	
 	while(1)
 	{
@@ -199,6 +217,17 @@ int main(void)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+/*
 static void vBlinkTask( void * parameters)
 {
 	for (;;)
@@ -218,7 +247,7 @@ static void vBlinkTask( void * parameters)
 	
 }
 
-
+*/
 
 
 /*
@@ -336,6 +365,7 @@ static void vPaperClipSellTask( void * parameters)
 
 
 */
+/*
 static void vCLI_Task(void * parameters)
 {
 	
@@ -361,7 +391,7 @@ static void vCLI_Task(void * parameters)
 	}
 	
 }
-
+*/
 
 
 
