@@ -1,6 +1,19 @@
+/*
+ENSE 452 Lab Project
+Alok Paranjape
+200246370
+December 3rd
+
+The function definitions for startup, 
+as well as the printing the initial UI and window
+*/
+
+
 #include "util.h"
 #include "usart.h"
 #include "CLI.h"
+
+
 
 void serial_init(void)
 {
@@ -77,7 +90,7 @@ void serial_init(void)
 	
 	//set it to create interrupts when it recieves on USART2
 	USART2->CR1 |= USART_CR1_RXNEIE;
-	//enable the interrupt
+	//enable the interrupt (same deal as above?)
 	NVIC_EnableIRQ(USART2_IRQn);
 }
 
@@ -85,42 +98,48 @@ void serial_init(void)
 void intro_message(void)
 {
 	
-		uint8_t top_ANSI[] = "\x1b[0;0H";
+	//put the cursor at the top left corner of the screen
+	uint8_t top_ANSI[] = "\x1b[0;0H";
 	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
 	//print out a title message
 	uint8_t title_msg[] = "\rENSE 452 Lab Project (Universal Paperclips Phase 1a) \n\r";
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
-	
+	//print a bar for the number of paperclips in inventory
 	uint8_t clip_msg[] = "Paperclips: \n\r";
 	CLI_Transmit(clip_msg, (sizeof(clip_msg) / sizeof(uint8_t)));
 	
+	//print a bar for the amount of funding available
 	uint8_t money_message[] = "Money: \n\r";
 	CLI_Transmit(money_message, (sizeof(money_message) / sizeof(uint8_t)));
 	
+	//print a bar for the amount of wire ready for production
+	//it's static, could use a variable if it needs to be rebalanced more
 	uint8_t UI_msg1[] = "Wire (12$): \n\r";
 	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
 
-	
+	//print a bar of the amount of autoclippers currently running
 	uint8_t UI_msg2[] = "Autoclippers (40$): \n\r";
 	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
 	
+	
+	//print a bar for the currently set price
 	uint8_t UI_msg3[] = "Price ($): 3 \n\r";
 	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
 	
-	
+	//print a line to seperate where the commands are typed below 
 	uint8_t UI_divider[] = "------------------------";
 	CLI_Transmit(UI_divider, (sizeof(UI_divider) / sizeof(uint8_t)));
 	
 
 	
-	
+	//make a scrolling window starting below where the line was printed
 	uint8_t mid_ANSI[] = "\x1b[8;r";
 	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
 	
 	
-		
+	//put the cursor there
 	uint8_t mid_place_ANSI[] = "\x1b[8;0H";
 	CLI_Transmit(mid_place_ANSI, (sizeof(mid_place_ANSI) / sizeof(uint8_t)));
 
