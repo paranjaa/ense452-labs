@@ -419,6 +419,16 @@
               <FileType>1</FileType>
               <FilePath>.\util.c</FilePath>
             </File>
+            <File>
+              <FileName>rtos_tasks.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\rtos_tasks.h</FilePath>
+            </File>
+            <File>
+              <FileName>rtos_tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\rtos_tasks.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

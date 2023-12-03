@@ -1,5 +1,6 @@
 #include "util.h"
-
+#include "usart.h"
+#include "CLI.h"
 
 void serial_init(void)
 {
@@ -71,9 +72,57 @@ void serial_init(void)
 	//select the falling edge of PC13 events as the trigger (EXTI->FTSR)
 	EXTI->FTSR |= 0x2000;
 	
-	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
+	//Unmask EXTI as an interrupt source in the NVIC. Does the (NVIC->ISER[0]) step like in 351?
 	NVIC_EnableIRQ (EXTI15_10_IRQn);
 	
+	//set it to create interrupts when it recieves on USART2
 	USART2->CR1 |= USART_CR1_RXNEIE;
+	//enable the interrupt
 	NVIC_EnableIRQ(USART2_IRQn);
+}
+
+
+void intro_message(void)
+{
+	
+		uint8_t top_ANSI[] = "\x1b[0;0H";
+	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
+	
+	//print out a title message
+	uint8_t title_msg[] = "\rENSE 452 Lab Project (Universal Paperclips Phase 1a) \n\r";
+	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
+	
+	
+	uint8_t clip_msg[] = "Paperclips: \n\r";
+	CLI_Transmit(clip_msg, (sizeof(clip_msg) / sizeof(uint8_t)));
+	
+	uint8_t money_message[] = "Money: \n\r";
+	CLI_Transmit(money_message, (sizeof(money_message) / sizeof(uint8_t)));
+	
+	uint8_t UI_msg1[] = "Wire (12$): \n\r";
+	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
+
+	
+	uint8_t UI_msg2[] = "Autoclippers (40$): \n\r";
+	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
+	
+	uint8_t UI_msg3[] = "Price ($): 3 \n\r";
+	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
+	
+	
+	uint8_t UI_divider[] = "------------------------";
+	CLI_Transmit(UI_divider, (sizeof(UI_divider) / sizeof(uint8_t)));
+	
+
+	
+	
+	uint8_t mid_ANSI[] = "\x1b[8;r";
+	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
+	
+	
+		
+	uint8_t mid_place_ANSI[] = "\x1b[8;0H";
+	CLI_Transmit(mid_place_ANSI, (sizeof(mid_place_ANSI) / sizeof(uint8_t)));
+
+
 }
