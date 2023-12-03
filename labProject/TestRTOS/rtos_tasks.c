@@ -207,7 +207,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		}
 		
 		//print the number of paperclips, then a new line
-		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		CLI_Transmit((uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
@@ -219,7 +219,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		sprintf(clipCharArray, "%d", money);
 		
 		//print it, then a new line
-		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		CLI_Transmit((uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
@@ -227,7 +227,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		uint8_t wire_msg[] = "Wire (14$): ";
 		CLI_Transmit(wire_msg, (sizeof(wire_msg) / sizeof(uint8_t)));
 		sprintf(clipCharArray, "%d", wire);
-		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		CLI_Transmit((uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
@@ -235,7 +235,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		CLI_Transmit(clipper_msg, (sizeof(clipper_msg) / sizeof(uint8_t)));
 		
 		sprintf(clipCharArray, "%d", autoclippers);
-		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		CLI_Transmit((uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
@@ -245,7 +245,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		
 		
 		sprintf(clipCharArray, "%d", price);
-		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		CLI_Transmit((uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		

@@ -64,7 +64,7 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 	{
 		sendbyte('\n');
 		//CLI_Transmit(inputArray, (sizeof(inputArray) / sizeof(char)));
-		CLI_Decide(inputArray, (sizeof(inputArray) / sizeof(char))); 
+		CLI_Decide((uint8_t*)inputArray, (sizeof(inputArray) / sizeof(char))); 
 		//erase the input array for next time
 		//was using a loop before
 		memset(inputArray, 0, sizeof(inputArray));

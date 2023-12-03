@@ -1,12 +1,6 @@
-#include <stdio.h>
-//#include "stm32F103RB.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "usart.h"
-#include "CLI.h"
+
 #include "queue.h"
 #include "task.h"
-#include "util.h"
 
 
 #define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+1)
