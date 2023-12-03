@@ -228,6 +228,9 @@ static void vPaperClipDisplayTask( void * parameters)
 			}
 			
 		}
+		uint8_t ANSI_clear[] = "\x1b[K";
+		CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
+		
 		//with all that information from each task
 		
 		//reprint the label for the number of paperclips
@@ -248,11 +251,13 @@ static void vPaperClipDisplayTask( void * parameters)
 		}
 		
 		//print the number of paperclips, then a new line
+	
 		CLI_Transmit(
 		(uint8_t*)clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
+		CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 		//print the label for the amount of money
 		uint8_t money_msg[] = "Money: ";
 		CLI_Transmit(money_msg, (sizeof(money_msg) / sizeof(uint8_t)));
@@ -266,6 +271,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		sendbyte('\n');
 		sendbyte('\r');
 		
+		CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 		//do the same for every other printable label and its value
 		uint8_t wire_msg[] = "Wire (14$): ";
 		CLI_Transmit(wire_msg, (sizeof(wire_msg) / sizeof(uint8_t)));
@@ -275,6 +281,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		sendbyte('\n');
 		sendbyte('\r');
 		
+		CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 		uint8_t clipper_msg[] = "Autoclippers (40$): ";
 		CLI_Transmit(clipper_msg, (sizeof(clipper_msg) / sizeof(uint8_t)));
 		
@@ -284,7 +291,7 @@ static void vPaperClipDisplayTask( void * parameters)
 		sendbyte('\n');
 		sendbyte('\r');
 		
-		
+		CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
 		uint8_t price_msg[] = "Price($): ";
 		CLI_Transmit(price_msg, (sizeof(price_msg) / sizeof(uint8_t)));
 		
