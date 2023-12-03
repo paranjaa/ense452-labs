@@ -1,7 +1,7 @@
 //ENSE 452 Lab Project
 // Built from TESTRTOS again
 
-//#include <stdio.h>
+#include <stdio.h>
 //#include "stm32F103RB.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -11,198 +11,97 @@
 #include "task.h"
 #include "util.h"
 
-/*
-#define mainBLINKY_TASK_PRIORITY 		(tskIDLE_PRIORITY + 1 )
+
+
+#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+1)
 #define mainCLIPDISPLAY_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define mainCLIPSELL_TASK_PRIORITY (tskIDLE_PRIORITY + 3)
-
-
-#define mainCLI_TASK_PRIORITY (tskIDLE_PRIORITY+4)
-
-static void vBlinkTask( void * parameters);
+#define mainAutoClipper_TASK_PRIORITY (tskIDLE_PRIORITY + 4)
 
 static void vPaperClipDisplayTask(void * parameters);
-
 static void vPaperClipSellTask(void * parameters);
-
+static void vAutoClippersTask(void * parameters);
 static void vCLI_Task(void * parameters);
 
 
+QueueHandle_t xCLI_Queue;
 QueueHandle_t xClip_Queue;
 QueueHandle_t xSell_Queue;
+QueueHandle_t xWire_Queue;
+QueueHandle_t xClipper_Queue;
+QueueHandle_t xClipper_msg_Queue;
+QueueHandle_t xPrice_Queue;
+QueueHandle_t xSell_Rate_Queue;
 
-QueueHandle_t xCLI_Queue;
-
-
-*/
 
 
 int main(void)
 {
 
 	
-	//startupCheck();
-	
+
 	
 	serial_init();
 	
-	//uint8_t title_msg[] = "\r ENSE 452 Lab Project\n\r";
-	//CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
+	xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
+	xClip_Queue = xQueueCreate(8, sizeof(uint8_t));	
+	xSell_Queue = xQueueCreate(8, sizeof(uint8_t));	
+	xWire_Queue = xQueueCreate(1, sizeof(uint8_t));
+	xClipper_msg_Queue = xQueueCreate(1, sizeof(uint8_t));
+	xClipper_Queue = xQueueCreate(1, sizeof(uint8_t));
+	xPrice_Queue = xQueueCreate(1, sizeof(uint8_t));
 	
-	//startupCheck();
-	
-	/*
-	RCC->APB2ENR |= (1u<<2) | (1u<<4);
-	
-		//RCC->APB2ENR |=  RCC_APB2ENR_IOPAEN;
-		//RCC->APB2ENR |=  RCC_APB2ENR_IOPCEN;
-	
-	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
-	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
-	GPIOA->CRL |=  (1u<<20) |  (1u<<21) | (3<<8) | (2<<10);
-	//GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(4<11);
-	
-	//AFIO->MAPR |= AFIO_MAPR_USART2_REMAP;
-	USART2->BRR = (8<<0) | (19<<4);  //hopefully baud 115200
-	USART2->CR1 |= USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
-	USART2->CR2 |= USART_CR2_CLKEN;	
-
-	
-	
-	
-	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
-	*/
-	
-	/*
-	//serial_open();
-	
-	
-	
-	RCC->APB2ENR |= (1u<<2) | (1u<<4) ;
-	RCC->APB1ENR |= RCC_APB1ENR_USART2EN; //enable USART2 clock
-	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(1u<<10) &~ (1u<<11);
-	GPIOA->CRL |=  (1u<<20) |  (1u<<21) | (3<<8) | (2<<10);
-	GPIOA->CRL &= ~(1u<<22) &~ (1u<<23) &~(4<11);
-	
-	AFIO->MAPR |= AFIO_MAPR_USART2_REMAP;
-	USART2->BRR = (8<<0) | (19<<4);  //hopefully baud 115200
-	USART2->CR1 |= USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;
-	USART2->CR2 |= USART_CR2_CLKEN;
-	
-	//GPIOA->ODR |= (1u<<5);
-	
-	//Onboard Button -> PC/13
-	//need to setup interrupts on PC 13
-	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
-	
-	//Turn on the clocks for AFIO and PortC ( RCC-> APB2ENR)
-	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
-
-	
-	//Select Port C pins as the source for EXTI 0 events (AFIO->EXTICR)
-	AFIO->EXTICR[3] |= 0x20;
-	
-	
-	//Unmask PC13 as the interrupt source (EXTI->IMR)
-	EXTI->IMR |= 0x2000;
-	
-	//select the falling edge of PC13 events as the trigger (EXTI->FTSR)
-	EXTI->FTSR |= 0x2000;
-	
-	
-	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
-	NVIC_EnableIRQ (EXTI15_10_IRQn);
-	
-	GPIOA->CRL &= ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
-	GPIOA->CRL |= (GPIO_CRL_CNF2_1 | GPIO_CRL_MODE2 | GPIO_CRL_CNF3_1);
-	
-	//set the UsartEnable bit for USART2, before setting TE and RE
-	USART2->CR1 |= USART_CR1_UE;
-  //Enable the USART TransmitEnable and RecieveEnable bits
-	USART2->CR1 |= USART_CR1_TE;
-	USART2->CR1 |= USART_CR1_RE;
-	//set the UsartEnable bit again for USART2, after TE and RE
-	//(not actually sure why, I just remember Dave mentioning it and noting it down)
-	USART1->CR1 |= USART_CR1_UE;
-
-	//clear the 12th bit in CR1 so it's set to "Start bit, 8 Data bits, n Stop bit"
-	USART2 -> CR1 &= ~0x1000; 
-	
-	//set the USART Interrupt Enable, so it generates an interrupt when a character is recieved
-	USART2->CR1 |= USART_CR1_RXNEIE;
-	
-	
-	
-	//Set the baud rate to to 115200
-	USART2 -> BRR = (8 << 0) | (19 << 4);
-	
-	
-	//Unmask USART2 as an interrupt source in the NVIC
-	NVIC_EnableIRQ(USART2_IRQn);
+	xSell_Rate_Queue = xQueueCreate(4, sizeof(uint8_t));
 	
 	
 
-	//startupCheck();
-
-
-
-	
-	
-	
-	//xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
-	
-	//xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
 	
 	xTaskCreate(vCLI_Task, "CLI", configMINIMAL_STACK_SIZE, NULL, mainCLI_TASK_PRIORITY, NULL);
+	xTaskCreate(vPaperClipDisplayTask, "ClipDisplay", configMINIMAL_STACK_SIZE, NULL, mainCLIPDISPLAY_TASK_PRIORITY, NULL);
+	xTaskCreate(vPaperClipSellTask, "SellClips", configMINIMAL_STACK_SIZE, NULL, mainCLIPSELL_TASK_PRIORITY, NULL);
+	xTaskCreate(vAutoClippersTask, "AutoClippers", configMINIMAL_STACK_SIZE, NULL, mainAutoClipper_TASK_PRIORITY, NULL);
 	
-		
-	xTaskCreate(vBlinkTask, "Blinky", configMINIMAL_STACK_SIZE, NULL, mainBLINKY_TASK_PRIORITY, NULL);
-	
-	//xClip_Queue = xQueueCreate(8, sizeof(uint8_t));	
-	
-	//xSell_Queue = xQueueCreate(8, sizeof(uint8_t));	
-	
-
-	xCLI_Queue = xQueueCreate(1, sizeof(uint8_t));
-
-	
-	//uint8_t ANSI_clear[] = "\x1b[2J";
-	//CLI_Transmit(ANSI_clear, (sizeof(ANSI_clear) / sizeof(uint8_t)));
-	
+	uint8_t top_ANSI[] = "\x1b[0;0H";
+	CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 	
 	//print out a title message
-	uint8_t title_msg[] = "E NSE 452 Lab Project\n\r";
+	uint8_t title_msg[] = "\rENSE 452 Lab Project (Universal Paperclips Phase 1a) \n\r";
 	CLI_Transmit(title_msg, (sizeof(title_msg) / sizeof(uint8_t)));
 	
-	//skip printing for the working parts
-	sendbyte('\n');
-	sendbyte('\n');
 	
+	uint8_t clip_msg[] = "Paperclips: \n\r";
+	CLI_Transmit(clip_msg, (sizeof(clip_msg) / sizeof(uint8_t)));
 	
-	//later UI stuff
-	uint8_t UI_msg1[] = "Wire: Unimplemented\n\r";
+	uint8_t money_message[] = "Money: \n\r";
+	CLI_Transmit(money_message, (sizeof(money_message) / sizeof(uint8_t)));
+	
+	uint8_t UI_msg1[] = "Wire (12$): \n\r";
 	CLI_Transmit(UI_msg1, (sizeof(UI_msg1) / sizeof(uint8_t)));
 
 	
-	//these are currently static, they're just the rates in the sell task
-	uint8_t UI_msg2[] = "Sell Rate: 25%\n\r";
+	uint8_t UI_msg2[] = "Autoclippers (40$): \n\r";
 	CLI_Transmit(UI_msg2, (sizeof(UI_msg2) / sizeof(uint8_t)));
 	
-	uint8_t UI_msg3[] = "Price: 1.00 $ \n \r";
+	uint8_t UI_msg3[] = "Price ($): 3 \n\r";
 	CLI_Transmit(UI_msg3, (sizeof(UI_msg3) / sizeof(uint8_t)));
 	
 	
-	
-	
-	
+	uint8_t UI_divider[] = "------------------------";
+	CLI_Transmit(UI_divider, (sizeof(UI_divider) / sizeof(uint8_t)));
 	
 
-	*/
 	
-	 /*Start the scheduler. */
-	//vTaskStartScheduler();
+	
+	uint8_t mid_ANSI[] = "\x1b[8;r";
+	CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
+	
+	
+		
+	uint8_t mid_place_ANSI[] = "\x1b[8;0H";
+	CLI_Transmit(mid_place_ANSI, (sizeof(mid_place_ANSI) / sizeof(uint8_t)));
+	
+
+	vTaskStartScheduler();
 	
 	
 	
@@ -225,61 +124,50 @@ int main(void)
 
 
 
-
-
-/*
-static void vBlinkTask( void * parameters)
-{
-	for (;;)
-	{
-	
-		GPIOA->ODR |= (1u<<5);	
-		USART2->DR = 0x60;
-		vTaskDelay(1000);
-		
-		GPIOA->ODR &= ~(1u<<5);
-		
-		vTaskDelay(1500);
-		
-		
-	}
-	
-	
-}
-
-*/
-
-
-/*
 static void vPaperClipDisplayTask( void * parameters)
 {
 	uint8_t paperclips = 0;
 	uint8_t money = 0;
+	uint8_t wire = 20;
+	uint8_t autoclippers = 0;
+	uint8_t price = 3;
 	
 	uint8_t newClips = 0;
 	uint8_t sellClips = 0;
-	uint8_t clipCharSize = 8;
-	uint8_t clipCharArray[clipCharSize]; 
+	uint8_t newWire = 0;
+	uint8_t newClippers = 0;
+	uint8_t newPrice = 0;
+	
+	uint8_t clipCharSize = 16;
+	char clipCharArray[clipCharSize]; 
 	for (;;)
 	{
+		
+		uint8_t save_cursor_ANSI[] = "\x1b[s";
+		CLI_Transmit(save_cursor_ANSI, (sizeof(save_cursor_ANSI) / sizeof(uint8_t)));
 				
 		uint8_t top_ANSI[] = "\x1b[2;0H";
 		CLI_Transmit(top_ANSI, (sizeof(top_ANSI) / sizeof(uint8_t)));
 		
-		//when it gets updates about 
+		//when it gets updates about new clips being made
 		if( uxQueueMessagesWaiting( xClip_Queue ) != 0 )		
 		{			
 
 			//replace the new clips value with it
 			xQueueReceive(xClip_Queue, &newClips, NULL);
-			paperclips = paperclips + newClips;
-
+			
+			//if there's enough wire in storage
+			if( (wire - newClips) >= 0)
+			{
+				//increment the number of paperclips
+				paperclips = paperclips + newClips;
+				//decrement the amount of wire
+				wire = wire - newClips;
+			}
 	
 		}
 		
-
 		
-		//should probably split updating for sold clips off into a different task
 		if( uxQueueMessagesWaiting( xSell_Queue ) != 0 )		
 		{			
 
@@ -290,15 +178,97 @@ static void vPaperClipDisplayTask( void * parameters)
 			{
 				paperclips = paperclips - sellClips;
 				sellClips = 0;
-				money = money + 1;
+				money = money + price;
 			
 			}
 		}
 		
+		if( uxQueueMessagesWaiting( xWire_Queue ) != 0 )		
+		{			
+			
+			//get the wire value from the queue
+			xQueueReceive(xWire_Queue, &newWire, NULL);
+			//if there's enough funds for it
+			if( (money - 10) >= 0) 
+			{
+				wire = wire + 10;
+				money = money - 14;
+				
+			
+			}
+		}
+		
+		//if there are messages waiting for new autoclippers
+		if( uxQueueMessagesWaiting( xClipper_msg_Queue ) != 0 )		
+		{			
+			
+			//get the value from the queue
+			xQueueReceive(xClipper_msg_Queue, &newClippers, NULL);
+			
+			
+			//if there's enough funding for an autoclipper
+			if( (money - 40) >= 0)
+			{
+				money = money - 40;
+				//send that to the autoclipper task so it can start production
+				newClippers = 1;
+				xQueueSendToBack(xClipper_Queue, &newClippers, NULL);
+				autoclippers = autoclippers+1;
+			}
+	
+		}
+		
+		
+		
+
+		
+		
+		
+		
+		if(uxQueueMessagesWaiting(xPrice_Queue) != 0)
+		{
+			xQueueReceive(xPrice_Queue, &newPrice, NULL);
+			
+			//if they put in to lower it with 0, try to lower the price
+			if(newPrice == 0)
+			{
+				//if the price can go down (not less than 1), decrement it
+				if(price > 1)
+				{
+					price = price - 1;
+					//tell the sell function to update its rate of sale to fit the new price
+					uint8_t update_sale_rate = 0;
+					xQueueSendToBack(xSell_Rate_Queue, &update_sale_rate, NULL);
+					
+				}
+			}
+			//
+			if(newPrice == 1)
+			{
+				//if the price can go up (to 10 at most), increment it
+				if(price < 11)
+				{
+					price = price + 1;
+					//tell the sale function to update its rate of sale
+					uint8_t update_sale_rate = 1;
+					xQueueSendToBack(xSell_Rate_Queue, &update_sale_rate, NULL);
+		
+				}
+			
+			}
+			
+
+			
+			
+		}
+		
+		//reprint the label for the number of paperclips
 		uint8_t clip_msg[] = "Paperclips: ";
 		CLI_Transmit(clip_msg, (sizeof(clip_msg) / sizeof(uint8_t)));
 		
+		//get the number of paperclips with sprintf
 		sprintf(clipCharArray, "%d", paperclips);
+		//then clean up the array made from it
 		for(uint8_t i = 0; i < clipCharSize; i++)
 		{
 			if( (clipCharArray[i] < '0') || (clipCharArray[i] > '9'))
@@ -309,21 +279,56 @@ static void vPaperClipDisplayTask( void * parameters)
 		
 		}
 		
+		//print the number of paperclips, then a new line
 		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
 		
+		//print the label for the amount of money
 		uint8_t money_msg[] = "Money: ";
 		CLI_Transmit(money_msg, (sizeof(money_msg) / sizeof(uint8_t)));
 		
-			
+		//get the amount of money
 		sprintf(clipCharArray, "%d", money);
 		
+		//print it, then a new line
 		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
 		sendbyte('\n');
 		sendbyte('\r');
+		
+		//print the label for the amount of wire
+		uint8_t wire_msg[] = "Wire (14$): ";
+		CLI_Transmit(wire_msg, (sizeof(wire_msg) / sizeof(uint8_t)));
+		sprintf(clipCharArray, "%d", wire);
+		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		sendbyte('\n');
+		sendbyte('\r');
+		
+		uint8_t clipper_msg[] = "Autoclippers (40$): ";
+		CLI_Transmit(clipper_msg, (sizeof(clipper_msg) / sizeof(uint8_t)));
+		
+		sprintf(clipCharArray, "%d", autoclippers);
+		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		sendbyte('\n');
+		sendbyte('\r');
+		
+		
+		uint8_t price_msg[] = "Price($): ";
+		CLI_Transmit(price_msg, (sizeof(price_msg) / sizeof(uint8_t)));
+		
+		
+		sprintf(clipCharArray, "%d", price);
+		CLI_Transmit(clipCharArray, (sizeof(clipCharArray) / sizeof(uint8_t)));
+		sendbyte('\n');
+		sendbyte('\r');
+		
 	
-
+		
+		uint8_t mid_ANSI[] = "\x1b[8;r";
+		CLI_Transmit(mid_ANSI, (sizeof(mid_ANSI) / sizeof(uint8_t)));
+	
+		uint8_t return_cursor_ANSI[] = "\x1b[u";
+		CLI_Transmit(return_cursor_ANSI, (sizeof(return_cursor_ANSI) / sizeof(uint8_t)));
 			
 		vTaskDelay(100);
 		}
@@ -336,22 +341,52 @@ static void vPaperClipDisplayTask( void * parameters)
 static void vPaperClipSellTask( void * parameters)
 {
 	//these need to be changeable to reflect increasing demand
-	int sellRate = 0;
-	int sellFactor = 4;
+	uint8_t sellRate = 0;
+	uint8_t sellFactor = 3;
+	uint8_t new_factor = 0;
 	
 	for (;;)
 	{
-		sellRate = sellRate + 1;
-		
-		if(sellRate > sellFactor)
+	
+		if( uxQueueMessagesWaiting( xSell_Rate_Queue ) != 0 )	
 		{
-			int newClips = 1;
-			xQueueSendToFrontFromISR( xSell_Queue, &newClips, NULL);			
-			sellRate = 0;
+			xQueueReceive(xSell_Rate_Queue, &new_factor, NULL);
+			GPIOA->ODR |= GPIO_ODR_ODR5;
+
+			
+			if(new_factor == 1)
+			{
+				sellFactor = sellFactor + 1;
+				sellRate = 0;
+
+				
+			}
+			if(new_factor == 0)
+			{
+				sellFactor = sellFactor - 1;
+				sellRate = 0;
+			
+			}
+		
+		}
+		else
+		{
+			//increment the sell rate
+			sellRate = sellRate + 1;
+			if(sellRate > sellFactor)
+			{
+				uint8_t sellClips = 1;
+				xQueueSendToBack( xSell_Queue, &sellClips, NULL);			
+				sellRate = 0;
+			
+			}
+			
+			//try again a half second later
 		
 		}
 		
-		vTaskDelay(1000);
+		
+		vTaskDelay(500);
 	}
 	
 	
@@ -364,14 +399,12 @@ static void vPaperClipSellTask( void * parameters)
 
 
 
-*/
-/*
+
+
 static void vCLI_Task(void * parameters)
 {
 	
-	
 	uint8_t newChar;
-	
 	
 	for (;;)
 	{
@@ -391,7 +424,40 @@ static void vCLI_Task(void * parameters)
 	}
 	
 }
-*/
+
+static void vAutoClippersTask(void * parameters)
+{
+	uint8_t auto_clippers = 0;
+	uint8_t new_clippers = 0;
+	uint8_t new_clips = 0;
+	for(;;)
+	{
+		if( uxQueueMessagesWaiting( xClipper_Queue ) != 0 )		
+		{			
+			
+			//get the value from the queue
+			xQueueReceive(xClipper_Queue, &new_clippers, NULL);
+			auto_clippers = auto_clippers + 1;
+			new_clippers = 0;
+			//update the amount the task produces each time
+			new_clips = auto_clippers*1;
+	
+		}
+		
+		if(new_clips > 0)
+		{
+			xQueueSendToBack( xClip_Queue, &new_clips, NULL);
+			
+		}
+		
+		
+		
+		vTaskDelay(1000);
+	}
+	
+
+}
+
 
 
 

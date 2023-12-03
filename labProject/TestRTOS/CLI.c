@@ -20,14 +20,16 @@ Added a function for RTOS, couldn't get the rest of it to work
 
 
 
-extern uint8_t recieved_char;
-extern uint8_t new_recieved;
-
+//extern uint8_t recieved_char;
+//extern uint8_t new_recieved;
+extern QueueHandle_t xWire_Queue;
+extern QueueHandle_t xClipper_msg_Queue;
+extern QueueHandle_t xPrice_Queue;
 
 //make an array for storing the characters the user sends 
 //5 should be enough
-const uint8_t INPUT_SIZE = 5;
-static uint8_t inputArray[INPUT_SIZE] = ""; 
+char inputArray[10];
+
 
 void CLI_Transmit(uint8_t *pData, uint16_t Size)
 {
@@ -42,85 +44,40 @@ void CLI_Transmit(uint8_t *pData, uint16_t Size)
 void CLI_Receive(uint8_t *pData, uint16_t Size)
 {
 	uint8_t newChar = *pData;
-	sendbyte(newChar);
-	uint8_t currentIndex = (sizeof(inputArray) / sizeof(uint8_t));
+	uint8_t currentIndex = strlen(inputArray);
 	
-	//check if it's an enter, 
+	sendbyte(newChar);
+	
+	//if it's a delete
+	if(newChar == 8 || newChar == 127)
+	{
+		if(currentIndex > 0)
+		{
+			//delete the latest character
+			inputArray[currentIndex] = ' ';
+			inputArray[currentIndex-1] = '\0';
+			
+		}
+	}
+	
 	if(newChar == '\r')
 	{
 		sendbyte('\n');
-		CLI_Transmit(inputArray, (sizeof(inputArray) / sizeof(uint8_t)));
-		return;
-	}
-	//if it's a backspace (or a delete) (and the index isn't empty)
-	if(newChar == 8 && currentIndex > 0)
-	{
-		currentIndex--;
-		//put a null terminator at the current spot in the array
-		inputArray[currentIndex] = '\0';
-		return;
+		//CLI_Transmit(inputArray, (sizeof(inputArray) / sizeof(char)));
+		CLI_Decide(inputArray, (sizeof(inputArray) / sizeof(char))); 
+		//erase the input array for next time
+		//was using a loop before
+		memset(inputArray, 0, sizeof(inputArray));
 		
-		//for(uint8_t i = (currentIndex + 1); i < (sizeof(inputArray) / sizeof(uint8_t); i++)
-		//{
-		//}
-
+		return;
 	}
-	//if it's not a enter or a delete, if there's still room in the array
-	if(currentIndex < (sizeof(inputArray) / sizeof(uint8_t)))
+	
+	if(currentIndex < 10)
 	{
-		//then add it to the array and move the null forward
 		inputArray[currentIndex] = newChar;
-		currentIndex++;
-		inputArray[currentIndex] = '\0';
-		return;
-		
+		inputArray[currentIndex+1] = '\0';
+	
 	}
-	//if(currentSize < sizeof(inputArray))
-	//{
-		//put the new character in at the latest spot 
-	//	inputArray[currentSize] = newChar;
-	//	currentSize++;
-	//	inputArray[currentSize] = '\0';
-		//sendbyte(\r
-	//}
-	
-	
-	
-	/*
-	//if they send either a backspace or a delete
-	if(newChar == 8 || newChar == 127)
-	{
-		sendbyte('D');
-	}
-	//if they send an enter (here it's a carriage return)
-	if(newChar == 13)
-	{
-		sendbyte('E');
-	}
-	//if they didn't send enter or a backspace
-	//check if there's still room in the string
-	else if(currentSize < sizeof(inputArray) - 1)
-	{
-		sendbyte(newChar);
-		//put the new character after the end of the current array
-		inputArray[(currentSize + 1)] = newChar;
-		
-		//get a new size for the increased array
-		int newSize = (sizeof(inputArray) / sizeof(uint8_t));
-		
-		//with that size, put a new null terminator at the end
-		inputArray[newSize] = '\0';
-		
-		
-		
-	}*/
-		
-	
-	
-
-	
-	//sendbyte(newChar);
-	
 	
 }
 
@@ -128,6 +85,49 @@ void CLI_Receive(uint8_t *pData, uint16_t Size)
 //making a new function for dealing with the LED
 
 
+void CLI_Decide(uint8_t *pData, uint16_t Size)
+{
+	if (strcmp(inputArray, "more") == 0)
+	{
+		uint8_t msg1[] = "\n\r - trying to increase the price\n\r";
+		uint8_t price_send = 1;
+		xQueueSendToBack( xPrice_Queue, &price_send, NULL);
+		CLI_Transmit(msg1, (sizeof(msg1) / sizeof(uint8_t)));
+		return;
+	}
+	if (strcmp(inputArray, "less") == 0)
+	{
+		uint8_t msg2[] = "\n\r - trying to decrease the price\n\r";
+		uint8_t price_send = 0;
+		xQueueSendToBack( xPrice_Queue, &price_send, NULL);
+		CLI_Transmit(msg2, (sizeof(msg2) / sizeof(uint8_t)));
+		return;
+	}
+	if (strcmp(inputArray, "wire") == 0)
+	{
+		uint8_t msg3[] = "\n\r  tried to purchase wire \n\r";
+		CLI_Transmit(msg3, (sizeof(msg3) / sizeof(uint8_t)));
+		uint8_t wire_send = 20;
+		xQueueSendToBack( xWire_Queue, &wire_send, NULL);
+		return;
+	}
+	
+	if (strcmp(inputArray, "auto") == 0)
+	{
+		uint8_t msg3[] = "\n\r  tried to purchase autoclipper \n\r";
+		CLI_Transmit(msg3, (sizeof(msg3) / sizeof(uint8_t)));
+		uint8_t clipper_send = 1;
+		xQueueSendToBack(xClipper_msg_Queue, &clipper_send, NULL);
+		return;
+	}
+	else
+	{		
+			uint8_t error_msg[] = "\n\r- error, unrecognized command\n\r";
+			CLI_Transmit(error_msg, (sizeof(error_msg) / sizeof(uint8_t)));
+
+	}
+
+}
 //Receive data via USART
 /*
 void CLI_RTOS(uint8_t *input, uint16_t size) 

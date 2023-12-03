@@ -71,9 +71,9 @@ void serial_init(void)
 	//select the falling edge of PC13 events as the trigger (EXTI->FTSR)
 	EXTI->FTSR |= 0x2000;
 	
-	
 	//Unmask EXTI as an interrupt source in the NVIC (NVIC->ISER[0])
 	NVIC_EnableIRQ (EXTI15_10_IRQn);
 	
-
+	USART2->CR1 |= USART_CR1_RXNEIE;
+	NVIC_EnableIRQ(USART2_IRQn);
 }
