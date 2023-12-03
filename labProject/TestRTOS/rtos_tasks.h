@@ -1,4 +1,3 @@
-
 #include "queue.h"
 #include "task.h"
 
@@ -18,6 +17,8 @@ extern QueueHandle_t xClipper_Queue;
 extern QueueHandle_t xClipper_msg_Queue;
 extern QueueHandle_t xPrice_Queue;
 extern QueueHandle_t xSell_Rate_Queue;
+
+
 
 void createQueues(void);
 
